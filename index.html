@@ -1,0 +1,1576 @@
+﻿<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tool Ostruzione HCM">
+<meta name="theme-color" content="#FAF9F7">
+<script data-iphone="sentinella">
+(function(){
+var h=document.documentElement, msg="";
+function ha(c){ return (" "+h.className+" ").indexOf(" "+c+" ")>=0; }
+// L'errore puo' arrivare prima che l'avviso esista — uno script in <head> che
+// non si lascia leggere —: il messaggio si tiene da parte e si scrive quando
+// la pagina c'e'.
+function scrivi(){
+  var e=document.getElementById("nmerr");
+  if(e&&msg) e.textContent="Errore del motore: "+msg;
+}
+function ko(m){
+  if(m&&!msg) msg=m;
+  if(!ha("motore-ko")) h.className+=" motore-ko";
+  scrivi();
+}
+h.className+=" js";
+window.onerror=function(m,src,riga,col){
+  m=String(m);
+  if(/^Script error\.?$/.test(m)) m="il browser non ne mostra il dettaglio (\u00abScript error.\u00bb)";
+  ko(m+(riga?" (riga "+riga+(col?", colonna "+col:"")+")":""));
+};
+document.addEventListener("DOMContentLoaded",function(){
+  if(!ha("motore-ok")) ko(msg||"il motore non ha completato l'avvio"); else scrivi();
+});
+})();
+</script>
+<title>HCM ostruttiva — farmaci, dosi e inibitori della miosina</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root {
+    --bg:#FAF9F7; --surface:#FFFFFF; --surface-alt:#F3F2EF;
+    --border:rgba(11,11,11,0.10); --border-strong:rgba(11,11,11,0.18);
+    --text-primary:#0B0B0B; --text-secondary:#52514E; --text-muted:#76746F;
+    --accent-blue:#2A78D6;   --accent-blue-bg:#E6F1FB;   --accent-blue-border:#B5D4F4;
+    --accent-amber:#BA7517;  --accent-amber-bg:#FAEEDA;  --accent-amber-border:#FAC775;
+    --accent-red:#A32D2D;    --accent-red-bg:#FCEBEB;    --accent-red-border:#F7C1C1;
+    --accent-green:#3B6D11;  --accent-green-bg:#EAF3DE;  --accent-green-border:#C0DD97;
+    --accent-teal:#0E7C86;   --accent-teal-bg:#E2F4F5;   --accent-teal-border:#A7DBDE;
+    --cor-1:#3B8E5A; --cor-2a:#E0A82E; --cor-2b:#DE7E3C; --cor-3nb:#CE6D86; --cor-3:#B33A3A;
+    --k0:#2E7D4F; --k0-bg:#E2F3E8; --k0-bd:#A6D9B8;
+    --k1:#2A78D6; --k1-bg:#E3EFFB; --k1-bd:#A9CBF1;
+    --k2:#8A6A00; --k2-bg:#FBF3C8; --k2-bd:#EBD56C;
+    --k3:#B45309; --k3-bg:#FDEBD8; --k3-bd:#F4BD85;
+    --k4:#A32D2D; --k4-bg:#FCE3E3; --k4-bd:#F0A9A9;
+    --grid:rgba(42,120,214,.08);
+    --font:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --display:'IBM Plex Sans Condensed','Arial Narrow',-apple-system,'Segoe UI',sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,Consolas,'Courier New',monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#111418; --surface:#181C22; --surface-alt:#20252D;
+      --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19);
+      --text-primary:#E7EAEE; --text-secondary:#B8BEC7; --text-muted:#949BA5;
+      --accent-blue:#72AAEE;   --accent-blue-bg:#18283A;   --accent-blue-border:#2E4B6C;
+      --accent-amber:#E3A94F;  --accent-amber-bg:#30250F;  --accent-amber-border:#5D4719;
+      --accent-red:#EF8E8E;    --accent-red-bg:#361B1B;    --accent-red-border:#6B3232;
+      --accent-green:#95C873;  --accent-green-bg:#1C2A13;  --accent-green-border:#3C5626;
+      --accent-teal:#6FCBD3;   --accent-teal-bg:#12292B;   --accent-teal-border:#2A5559;
+      --k0:#8FD3A8; --k0-bg:#132B1D; --k0-bd:#2D5A3E;
+      --k1:#8EC0F5; --k1-bg:#16283C; --k1-bd:#2F5378;
+      --k2:#EDD36A; --k2-bg:#2C260C; --k2-bd:#5E5120;
+      --k3:#F3B27A; --k3-bg:#33210F; --k3-bd:#6B4524;
+      --k4:#F29A9A; --k4-bg:#361B1B; --k4-bd:#6B3232;
+      --grid:rgba(114,170,238,.07);
+      color-scheme:dark;
+    }
+  }
+  body { font-family:var(--font); background:var(--bg); color:var(--text-primary); font-size:14.5px; line-height:1.65; -webkit-font-smoothing:antialiased; }
+  .page { max-width:960px; margin:0 auto; padding:0 16px 4rem; }
+  strong, b { font-weight:600; }
+  .muted { color:var(--text-muted); }
+  .hero { margin:0 -16px 0; padding:2.2rem 16px 1.3rem; border-bottom:1px solid var(--border);
+          background-color:var(--bg);
+          background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+          background-size:22px 22px; }
+  .kicker { font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-blue); margin-bottom:8px; }
+  .headline { font-family:var(--display); font-size:30px; font-weight:700; line-height:1.12; margin-bottom:10px; }
+  .lede { font-size:14.5px; color:var(--text-secondary); max-width:760px; margin-bottom:12px; }
+  .lede strong { color:var(--text-primary); }
+  .meta-row { display:flex; flex-wrap:wrap; gap:6px 8px; font-size:12px; }
+  .meta-chip { background:var(--surface); border:1px solid var(--border-strong); border-radius:99px; padding:2px 10px; color:var(--text-secondary); overflow-wrap:anywhere; }
+  .meta-chip strong { color:var(--text-primary); }
+  .bar { position:-webkit-sticky;position:sticky; top:0; z-index:30; background:var(--bg); border-bottom:1px solid var(--border-strong);
+         margin:0 -16px 1.2rem; padding:8px 16px; display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; }
+  .bar .lbl { font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); }
+  .bar .sp { flex:1 1 auto; }
+  .btn { font:600 12.5px var(--font); padding:6px 13px; border-radius:99px; border:1px solid var(--border-strong); background:var(--surface); color:var(--text-secondary); cursor:pointer; }
+  .btn:hover { border-color:var(--accent-blue); color:var(--accent-blue); }
+  .stage { display:flex; align-items:baseline; gap:10px; margin:2rem 0 .7rem; padding-bottom:6px; border-bottom:2px solid var(--border-strong); }
+  .stage-n { font-family:var(--mono); font-size:12px; font-weight:600; color:#FFFFFF; background:var(--accent-blue); border-radius:6px; padding:1px 7px; }
+  .stage-t { font-family:var(--display); font-size:20px; font-weight:700; line-height:1.2; }
+  .stage-w { margin-left:auto; font-size:11.5px; color:var(--text-muted); text-align:right; }
+  .card { background:var(--surface); border:1px solid var(--border-strong); border-radius:12px; padding:14px 16px; margin-bottom:12px; }
+  .card h3 { font-size:13px; font-weight:600; letter-spacing:.02em; margin-bottom:8px; color:var(--text-secondary); }
+  .card h4 { font-size:12px; font-weight:600; letter-spacing:.02em; color:var(--text-muted); margin:12px 0 4px; font-family:var(--mono); }
+  .card h4:first-child { margin-top:0; }
+  .row { display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; margin-bottom:10px; }
+  .row:last-child { margin-bottom:0; }
+  .fl { font-size:12.5px; font-weight:600; color:var(--text-secondary); min-width:150px; }
+  .fl small { display:block; font-weight:400; color:var(--text-muted); font-size:11.5px; }
+  input[type=number] { font:500 15px var(--font); color:var(--text-primary); background:var(--surface); border:1px solid var(--border-strong); border-radius:8px; padding:6px 9px; width:92px; text-align:center; }
+  select { font:500 13.5px var(--font); color:var(--text-primary); background:var(--surface); border:1px solid var(--border-strong); border-radius:8px; padding:5px 8px; max-width:100%; }
+  .seg { display:inline-flex; flex-wrap:wrap; border:1px solid var(--border-strong); border-radius:10px; overflow:hidden; }
+  .seg label { position:relative; cursor:pointer; }
+  .seg input { position:absolute; opacity:0; width:1px; height:1px; }
+  .seg span { display:block; padding:6px 12px; font-size:13.5px; font-weight:500; color:var(--text-secondary); border-right:1px solid var(--border); }
+  .seg label:last-child span { border-right:none; }
+  .seg input:checked + span { background:var(--text-primary); color:var(--bg); }
+  .seg input:focus-visible + span { outline:2px solid var(--accent-blue); outline-offset:-2px; }
+  .chk { display:flex; align-items:flex-start; gap:9px; padding:6px 0; font-size:14px; line-height:1.45; border-bottom:1px dashed var(--border); cursor:pointer; }
+  .chk:last-child { border-bottom:none; }
+  .chk input { margin-top:3px; width:17px; height:17px; flex:0 0 auto; accent-color:var(--accent-blue); }
+  .chk small { display:block; color:var(--text-muted); font-size:12px; }
+  .chk .tx { flex:1 1 auto; min-width:0; }
+  .riga { display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; padding:6px 0; border-bottom:1px dashed var(--border); }
+  .riga .fl { min-width:0; flex:1 1 180px; }
+  .hide { display:none !important; }
+  .esito { display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; margin-bottom:4px; }
+  .cat { display:inline-block; font-size:12.5px; font-weight:600; border-radius:99px; padding:2px 10px; border:1px solid; }
+  .k0 { color:var(--k0); background:var(--k0-bg); border-color:var(--k0-bd); }
+  .k1 { color:var(--k1); background:var(--k1-bg); border-color:var(--k1-bd); }
+  .k2 { color:var(--k2); background:var(--k2-bg); border-color:var(--k2-bd); }
+  .k3 { color:var(--k3); background:var(--k3-bg); border-color:var(--k3-bd); }
+  .k4 { color:var(--k4); background:var(--k4-bg); border-color:var(--k4-bd); }
+  .kx { color:var(--text-muted); background:var(--surface-alt); border-color:var(--border-strong); }
+  .big { font-family:var(--display); font-size:26px; font-weight:700; line-height:1.15; }
+  .cor { display:inline-block; font-family:var(--mono); font-size:11px; font-weight:600; color:#FFFFFF; border-radius:4px; padding:0 5px; margin:0 1px; white-space:nowrap; vertical-align:1px; }
+  .c1 { background:var(--cor-1); } .c2a { background:var(--cor-2a); color:#1D1602; } .c2b { background:var(--cor-2b); } .c3 { background:var(--cor-3); } .c3nb { background:var(--cor-3nb); }
+  .aha { display:inline-block; font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.03em; color:var(--accent-teal); background:var(--accent-teal-bg); border:1px solid var(--accent-teal-border); border-radius:4px; padding:0 5px; white-space:nowrap; vertical-align:1px; }
+  .pg { font-family:var(--mono); font-size:11px; color:var(--text-muted); }
+  .st { font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.03em; color:var(--accent-amber); background:var(--accent-amber-bg); border:1px solid var(--accent-amber-border); border-radius:4px; padding:0 5px; white-space:nowrap; }
+  .dv { font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.03em; color:var(--accent-red); background:var(--accent-red-bg); border:1px solid var(--accent-red-border); border-radius:4px; padding:0 5px; white-space:nowrap; }
+  .nota { border-left:3px solid var(--accent-amber); background:var(--accent-amber-bg); border-radius:0 8px 8px 0; padding:7px 11px; margin-top:8px; font-size:13.5px; }
+  .nota.info { border-left-color:var(--accent-blue); background:var(--accent-blue-bg); }
+  .nota.stop { border-left-color:var(--accent-red); background:var(--accent-red-bg); }
+  .nota.ok { border-left-color:var(--accent-green); background:var(--accent-green-bg); }
+  .nota.conf { border-left-color:var(--accent-teal); background:var(--accent-teal-bg); }
+  .nota.spenta { border-left-color:var(--border-strong); background:var(--surface-alt); color:var(--text-secondary); }
+  .nota strong { color:var(--text-primary); }
+  .passo { display:flex; gap:10px; padding:8px 0; border-bottom:1px dashed var(--border); }
+  .passo:last-child { border-bottom:none; }
+  .passo .ico { flex:0 0 26px; font-weight:700; text-align:center; font-family:var(--mono); font-size:13px; padding-top:1px; }
+  .passo .tx { flex:1 1 auto; font-size:14px; min-width:0; overflow-wrap:anywhere; }
+  .passo.att { background:var(--accent-blue-bg); border-radius:8px; border-bottom-color:transparent; padding:8px 8px; margin:2px -8px; }
+  .passo.att .ico { color:var(--accent-blue); }
+  .passo.no .ico { color:var(--accent-red); }
+  .lista li { margin:4px 0 4px 18px; font-size:13.5px; }
+  .foot { margin-top:2.4rem; padding-top:1rem; border-top:1px solid var(--border-strong); font-size:12px; color:var(--text-muted); line-height:1.7; }
+  .foot strong { color:var(--text-secondary); }
+  .farm { border-left:4px solid var(--border-strong); }
+  .farm.s-ok { border-left-color:var(--k0); }
+  .farm.s-ris { border-left-color:var(--accent-amber); }
+  .farm.s-no { border-left-color:var(--k4); }
+  .farm .nome { font-family:var(--display); font-size:21px; font-weight:700; line-height:1.15; }
+  .sint { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px; padding:7px 0; border-bottom:1px dashed var(--border); font-size:14px; }
+  .sint:last-child { border-bottom:none; }
+  .sint .n { font-weight:600; min-width:120px; }
+  .sint .d { color:var(--text-secondary); font-size:13.5px; flex:1 1 260px; min-width:0; }
+  .gr { display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; margin:6px 0 2px; }
+  .gr > span:last-child { flex:1 1 0; min-width:0; }
+  .gr .gn { font-family:var(--mono); font-size:11px; font-weight:600; color:#FFFFFF; background:var(--text-secondary); border-radius:5px; padding:0 6px; }
+  .gr.att .gn { background:var(--accent-blue); }
+  .grande { font-family:var(--display); font-size:22px; font-weight:700; line-height:1.2; }
+  .azione { font-size:16px; line-height:1.5; margin:8px 0 4px; padding:9px 12px; border-radius:8px; background:var(--surface-alt); border:1px solid var(--border-strong); overflow-wrap:anywhere; }
+  .azione b { font-family:var(--display); font-size:19px; font-weight:700; }
+  @media (max-width:640px) {
+    .headline { font-size:25px; }
+    .stage-w { display:none; }
+    .fl { min-width:0; width:100%; }
+    .big { font-size:22px; }
+    .grande { font-size:19px; }
+    .farm .nome { font-size:19px; }
+    .sint .n { min-width:0; width:100%; }
+    .page { overflow-wrap:anywhere; }
+  }
+  @media (max-width:420px) { .bar .lbl { display:none; } .bar { gap:5px 6px; } }
+  .chk.on .tx { color:var(--text-primary); font-weight:500; }
+  @media print { .bar { position:static; } }
+</style>
+<style data-iphone="stile">
+/* L'avviso e' visibile per costruzione: lo nasconde solo la classe che la
+   sentinella mette quando JavaScript esiste, e lo rimostra quando il motore
+   muore. Nell'anteprima dell'iPhone nessuna delle due arriva. */
+#nomotore{background:#FCEBEB;border:1.5px solid #A32D2D;border-radius:10px;
+ padding:12px 15px;margin:0 0 1.1rem;font-size:13.5px;line-height:1.6;color:#0B0B0B;
+ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif}
+#nomotore strong{display:block;color:#A32D2D;font-size:15px;margin-bottom:4px}
+#nomotore p{margin:6px 0 0}
+#nomotore a{color:#A32D2D}
+#nomotore .nmurl{font-family:'SFMono-Regular',Consolas,Menlo,monospace;font-size:.92em;word-break:break-all}
+#nomotore .nmerr{display:block;font-family:'SFMono-Regular',Consolas,Menlo,monospace;
+ font-size:11.5px;color:#A32D2D;margin-top:6px;word-break:break-word}
+#nomotore .nmerr:empty{display:none}
+html.js #nomotore{display:none}
+html.js.motore-ko #nomotore{display:block}
+
+#nmprivacy{background:#E2F4F5;border:1px solid #A7DBDE;border-radius:8px;padding:9px 13px;
+ margin:0 0 1rem;font-size:12.5px;line-height:1.55;color:#0B0B0B;
+ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif}
+@media print{#nmprivacy{display:none}}
+</style>
+</head>
+<body>
+<div class="nomotore" id="nomotore" role="alert">
+ <strong>Motore di calcolo non attivo</strong>
+ <p>I calcoli, i filtri e i comandi di questa pagina <b>non funzionano</b>: dove leggi «—» non c'è un
+ valore. Il testo resta leggibile, i numeri che dipendono dai tuoi dati no. Non usare questa pagina
+ per decidere una dose.</p>
+ <p>Su iPhone e iPad succede sempre con un file salvato sul telefono: si apre nell'<b>anteprima</b> —
+ dall'app File, da Mail, da WhatsApp —, che mostra la pagina ma non esegue il motore, e Apple non
+ permette di aprirlo in Safari. Sull'iPhone il tool funziona aperto da questo indirizzo, in Safari: <a class="nmurl" href="https://francescofugetto-ai.github.io/tool-ostruzione-hcm-web/">https://francescofugetto-ai.github.io/tool-ostruzione-hcm-web/</a> — poi Condividi, «Aggiungi alla schermata Home». Dopo la prima apertura funziona anche senza rete. Su computer e Android basta aprire il file.</p>
+ <span class="nmerr" id="nmerr"></span>
+</div>
+<div class="nmprivacy" id="nmprivacy">
+ <b>Quello che scrivi resta su questo dispositivo.</b> La pagina non invia niente in rete e non
+ salva niente: nessun dato esce da qui. Per la stessa ragione, <b>chiudendola il contenuto si
+ perde</b> — copia il referto dove ti serve prima di chiudere.
+</div>
+<div class="page">
+<header class="hero">
+  <div class="kicker">Strumento · Cardiomiopatie · ESC 2023, con la AHA/ACC 2024 a confronto</div>
+  <h1 class="headline">HCM ostruttiva — la scala dei farmaci, gli inibitori della miosina, la riduzione settale</h1>
+  <p class="lede"><strong>Come si usa.</strong> Il passo 1 porta il gradiente e i sintomi: con la Fig. 12 decide se l'ostruzione entra nella scala della Fig. 14, che comincia a <strong>50 mmHg</strong>, a riposo o provocati. Il passo 2 dice che cosa il paziente ha già provato, e ne esce il <strong>gradino</strong> con la sua classe. Il passo 3 porta età, sesso, peso, creatinina ed eGFR — la <strong>clearance di Cockcroft-Gault sul peso reale</strong> la calcola lo strumento, e decide; con BMI ≥30 accanto c'è quella sul peso aggiustato —, gravidanza e fegato. Il passo 4 dà dose e rene di ogni farmaco della scala. Il passo 5 è l'avvio e la titolazione di <strong>mavacamten</strong> o <strong>aficamten</strong> all'eco di controllo, con le interazioni: quelle soglie sono delle <strong>schede tecniche</strong>, non della linea guida. Poi l'ipotensione acuta e la riduzione settale. <strong>Azzera</strong>, in alto, ricomincia.</p>
+  <div class="meta-row">
+    <span class="meta-chip"><strong>Fonte</strong> 2023 ESC Guidelines for the management of cardiomyopathies · a confronto la 2024 AHA/ACC Guideline for the Management of Hypertrophic Cardiomyopathy</span>
+    <span class="meta-chip"><strong>Calcolo</strong> Fig. 12, p. 3551 · Rec. Table 18, p. 3553 · Rec. Table 19 e Fig. 14, p. 3554 · Rec. Table 20, pp. 3556–3557 · Rec. Table 21, p. 3557</span>
+    <span class="meta-chip"><strong>Dosi e rene</strong> ESC 2023 p. 3553; schede tecniche di Camzyos, Myqorzo, Inderal, Nadololo Cheplapharm, Seloken, Concor, Bisoprololo EG, Tenormin, Atenololo AHCL, Isoptin, Dilzene, Ritmodan, Brevibloc, Fenilefrina Aguettant, Lasix</span>
+  </div>
+</header>
+
+<div class="bar" id="bar" aria-live="polite">
+  <span class="lbl">Gradiente</span> <span id="barG" class="cat kx">gradiente —</span>
+  <span class="lbl">Gradino</span> <span id="barPasso" class="cat kx">gradino —</span>
+  <span class="lbl">Rene</span> <span id="barRene" class="cat kx">rene —</span>
+  <span class="sp"></span>
+  <button class="btn" id="azzera" type="button">Azzera</button>
+</div>
+
+<div class="stage"><span class="stage-n">1</span><span class="stage-t">L'ostruzione e i sintomi</span><span class="stage-w">Fig. 12, p. 3551 · Rec. Table 16, p. 3549</span></div>
+<div class="card">
+  <div class="riga"><span class="fl">Gradiente a riposo<small>picco istantaneo al Doppler, mmHg</small></span><input type="number" id="gRip" min="0" max="250" step="1" inputmode="numeric" placeholder="mmHg"></div>
+  <div class="riga"><span class="fl">Gradiente provocato al letto<small>Valsalva seduto e semisupino, poi in piedi; nitrato orale se non può fare sforzo</small></span><input type="number" id="gVal" min="0" max="250" step="1" inputmode="numeric" placeholder="mmHg"></div>
+  <div class="riga"><span class="fl">Gradiente all'eco da sforzo<small>in piedi, seduto o semisupino; vuoto se non è stato fatto</small></span><input type="number" id="gSf" min="0" max="250" step="1" inputmode="numeric" placeholder="mmHg"></div>
+  <div class="riga"><span class="fl">Sintomi oggi<small>classe NYHA; sotto i 5 anni la classe di Ross</small></span>
+    <span class="seg">
+      <label><input type="radio" name="nyha" value="1"><span>I · nessuno</span></label>
+      <label><input type="radio" name="nyha" value="2"><span>II</span></label>
+      <label><input type="radio" name="nyha" value="3"><span>III</span></label>
+      <label><input type="radio" name="nyha" value="4"><span>IV</span></label>
+    </span></div>
+  <label class="chk"><input type="checkbox" id="sinc"><span class="tx">Sincope da sforzo ricorrente, causata dal gradiente<small>conta come sintomo, ed è una riga sua della riduzione settale</small></span></label>
+  <div class="riga"><span class="fl">FEVS all'eco più recente<small>%: decide avvio e titolazione degli inibitori della miosina</small></span><input type="number" id="fe" min="5" max="90" step="1" inputmode="numeric" placeholder="%"></div>
+  <div class="muted" style="font-size:12.5px;margin-top:6px">Il gradiente che decide la scala è il massimo documentato, a riposo o provocato. Quello dell'eco di controllo degli inibitori della miosina, con Valsalva, si scrive al passo 5.</div>
+  <div id="outOstr" style="margin-top:8px"></div>
+</div>
+
+<div class="stage"><span class="stage-n">2</span><span class="stage-t">La terapia finora, e il gradino</span><span class="stage-w">Fig. 14 e Rec. Table 19, p. 3554 · p. 3553</span></div>
+<div class="card">
+  <div class="riga"><span class="fl">Betabloccante non vasodilatatore<small>«in corso» vuol dire alla massima dose tollerata</small></span>
+    <span class="seg">
+      <label><input type="radio" name="bb" value="no"><span>mai provato</span></label>
+      <label><input type="radio" name="bb" value="in"><span>in corso</span></label>
+      <label><input type="radio" name="bb" value="ko"><span>non tollerato o controindicato</span></label>
+    </span></div>
+  <div class="riga"><span class="fl">Verapamil o diltiazem</span>
+    <span class="seg">
+      <label><input type="radio" name="cc" value="no"><span>mai provato</span></label>
+      <label><input type="radio" name="cc" value="in"><span>in corso</span></label>
+      <label><input type="radio" name="cc" value="ko"><span>non tollerato o controindicato</span></label>
+    </span></div>
+  <div class="riga"><span class="fl">Disopiramide</span>
+    <span class="seg">
+      <label><input type="radio" name="diso" value="no"><span>mai provata</span></label>
+      <label><input type="radio" name="diso" value="in"><span>in corso</span></label>
+      <label><input type="radio" name="diso" value="ko"><span>non tollerata o controindicata</span></label>
+    </span></div>
+  <div class="riga"><span class="fl">Inibitore della miosina<small>mavacamten o aficamten</small></span>
+    <span class="seg">
+      <label><input type="radio" name="mi" value="no"><span>mai provato</span></label>
+      <label><input type="radio" name="mi" value="in"><span>in corso</span></label>
+      <label><input type="radio" name="mi" value="ko"><span>non tollerato o controindicato</span></label>
+    </span></div>
+  <h4>Che cosa fa evitare la disopiramide · p. 3553</h4>
+  <label class="chk"><input type="checkbox" id="glauc"><span class="tx">Glaucoma</span></label>
+  <label class="chk"><input type="checkbox" id="prost"><span class="tx">Prostatismo, nell'uomo</span></label>
+  <label class="chk"><input type="checkbox" id="qtfarm"><span class="tx">Altri farmaci che allungano il QT<small>la fonte nomina amiodarone e sotalolo</small></span></label>
+  <div class="riga"><span class="fl">QTc<small>ms: con la disopiramide si controlla in titolazione</small></span><input type="number" id="qtc" min="300" max="700" step="1" inputmode="numeric" placeholder="ms"></div>
+  <h4>Fibrillazione atriale · Rec. Table 18, p. 3553</h4>
+  <div class="riga"><span class="fl">FA</span>
+    <span class="seg">
+      <label><input type="radio" name="fa" value="nessuna"><span>nessuna</span></label>
+      <label><input type="radio" name="fa" value="nuova"><span>nuova o mal controllata</span></label>
+      <label><input type="radio" name="fa" value="contr"><span>controllata</span></label>
+      <label><input type="radio" name="fa" value="perm"><span>permanente</span></label>
+    </span></div>
+</div>
+<div class="card" id="outScala"></div>
+
+<div class="stage"><span class="stage-n">3</span><span class="stage-t">Il paziente e il rene</span><span class="stage-w">schede tecniche · componenti § 17.2</span></div>
+<div class="card">
+  <div class="riga"><span class="fl">Età</span><input type="number" id="eta" min="0" max="110" step="1" inputmode="numeric" placeholder="anni"></div>
+  <div class="riga"><span class="fl">Sesso</span>
+    <span class="seg">
+      <label><input type="radio" name="sesso" value="m"><span>uomo</span></label>
+      <label><input type="radio" name="sesso" value="f"><span>donna</span></label>
+    </span></div>
+  <div class="riga hide" id="rigaGrav"><span class="fl">Gravidanza e contraccezione<small>il mavacamten è controindicato senza contraccezione efficace</small></span>
+    <span class="seg">
+      <label><input type="radio" name="grav" value="nf"><span>non in età fertile</span></label>
+      <label><input type="radio" name="grav" value="contr"><span>contraccezione efficace</span></label>
+      <label><input type="radio" name="grav" value="nocontr"><span>senza contraccezione efficace</span></label>
+      <label><input type="radio" name="grav" value="gr"><span>gravida o la cerca</span></label>
+    </span></div>
+  <div class="riga"><span class="fl">Peso</span><input type="number" id="peso" min="25" max="250" step="0.5" inputmode="decimal" placeholder="kg"></div>
+  <div class="riga"><span class="fl">Altezza<small>serve al BMI: dai 30 si mostra anche la clearance sul peso aggiustato</small></span><input type="number" id="alt" min="120" max="220" step="1" inputmode="numeric" placeholder="cm"></div>
+  <div class="riga"><span class="fl">Creatinina</span><input type="number" id="creat" min="0.2" max="1800" step="0.01" inputmode="decimal" placeholder="—">
+    <span class="seg">
+      <label><input type="radio" name="ucr" value="mg" id="ucr_mg" checked><span>mg/dL</span></label>
+      <label><input type="radio" name="ucr" value="umol"><span>µmol/L</span></label>
+    </span></div>
+  <div class="riga"><span class="fl">eGFR<small>mL/min/1,73 m², dal laboratorio: è l'unità delle soglie di mavacamten e aficamten</small></span><input type="number" id="egfr" min="1" max="200" step="1" inputmode="numeric" placeholder="—"></div>
+  <label class="chk"><input type="checkbox" id="dialisi"><span class="tx">In dialisi</span></label>
+  <div class="riga"><span class="fl">Fegato</span>
+    <span class="seg">
+      <label><input type="radio" name="cp" value="no"><span>nessuna epatopatia nota</span></label>
+      <label><input type="radio" name="cp" value="ab"><span>Child-Pugh A–B</span></label>
+      <label><input type="radio" name="cp" value="c"><span>Child-Pugh C</span></label>
+    </span></div>
+  <div id="outRene" style="margin-top:8px"></div>
+</div>
+
+<div class="stage"><span class="stage-n">4</span><span class="stage-t">I farmaci della scala: dose e rene</span><span class="stage-w">ESC 2023 p. 3553 · schede tecniche</span></div>
+<div class="card farm" id="d_bb"></div>
+<div class="card farm" id="d_cc"></div>
+<div class="card farm" id="d_diso"></div>
+<div class="card farm" id="d_diur"></div>
+<div class="card farm" id="d_evita"></div>
+
+<div class="stage"><span class="stage-n">5</span><span class="stage-t">Inibitori della miosina: avvio e titolazione</span><span class="stage-w">Rec. Table 19, p. 3554 · Camzyos e Myqorzo, 4.2–4.6</span></div>
+<div class="card">
+  <div class="riga"><span class="fl">Molecola</span>
+    <span class="seg">
+      <label><input type="radio" name="mol" value="mava"><span>mavacamten</span></label>
+      <label><input type="radio" name="mol" value="afi"><span>aficamten</span></label>
+    </span></div>
+  <div id="boxMava" class="hide">
+    <div class="riga"><span class="fl">A che punto è<small>scheda tecnica, Fig. 1–4</small></span>
+      <select id="mfase">
+        <option value="">—</option>
+        <option value="avvio">prima di iniziare</option>
+        <option value="s4">settimana 4</option>
+        <option value="s8">settimana 8</option>
+        <option value="mant">settimana 12 e mantenimento</option>
+        <option value="dopo">4 settimane dopo un aumento o una ripresa</option>
+        <option value="sosp">sospeso per FEVS sotto il 50%</option>
+      </select></div>
+    <label class="chk hide" id="rigaSospG"><input type="checkbox" id="msospG"><span class="tx">Sospeso al controllo precedente perché il gradiente con Valsalva era sotto 20 mmHg<small>nelle prime 8 settimane si sospende, non si scende sotto 2,5 mg</small></span></label>
+    <div class="riga" id="rigaMdose"><span class="fl">Dose<small>quella in corso, o quella a cui è stato sospeso</small></span>
+      <span class="seg">
+        <label><input type="radio" name="mdose" value="2.5"><span>2,5 mg</span></label>
+        <label><input type="radio" name="mdose" value="5"><span>5 mg</span></label>
+        <label><input type="radio" name="mdose" value="10"><span>10 mg</span></label>
+        <label><input type="radio" name="mdose" value="15"><span>15 mg</span></label>
+      </span></div>
+    <div class="riga"><span class="fl">Fenotipo CYP2C19<small>la genotipizzazione è obbligatoria prima di iniziare</small></span>
+      <span class="seg">
+        <label><input type="radio" name="cyp" value="lento"><span>lento</span></label>
+        <label><input type="radio" name="cyp" value="norm"><span>intermedio, normale, rapido o ultrarapido</span></label>
+        <label><input type="radio" name="cyp" value="nd"><span>non ancora determinato</span></label>
+      </span></div>
+    <div class="riga hide" id="rigaMaum"><span class="fl">Ultimo aumento di dose</span>
+      <span class="seg">
+        <label><input type="radio" name="maum" value="mai"><span>nessuno finora</span></label>
+        <label><input type="radio" name="maum" value="meno3"><span>meno di 3 mesi fa</span></label>
+        <label><input type="radio" name="maum" value="piu3"><span>3 mesi fa o più</span></label>
+      </span></div>
+    <label class="chk hide" id="rigaM2"><input type="checkbox" id="m2volte"><span class="tx">La FEVS era già scesa sotto il 50% una volta alla dose di 2,5 mg</span></label>
+  </div>
+  <div id="boxAfi" class="hide">
+    <div class="riga"><span class="fl">A che punto è<small>scheda tecnica, Tabella 1</small></span>
+      <select id="afase">
+        <option value="">—</option>
+        <option value="avvio">prima di iniziare</option>
+        <option value="ctrl">eco di controllo in terapia</option>
+        <option value="int">interrotto per la FEVS</option>
+      </select></div>
+    <div class="riga" id="rigaAdose"><span class="fl">Dose<small>quella in corso, o quella a cui è stato interrotto</small></span>
+      <span class="seg">
+        <label><input type="radio" name="adose" value="5"><span>5 mg</span></label>
+        <label><input type="radio" name="adose" value="10"><span>10 mg</span></label>
+        <label><input type="radio" name="adose" value="15"><span>15 mg</span></label>
+        <label><input type="radio" name="adose" value="20"><span>20 mg</span></label>
+      </span></div>
+  </div>
+  <div class="riga" id="rigaGctrl"><span class="fl">Gradiente con Valsalva all'eco di controllo<small>mmHg; la FEVS è quella del passo 1</small></span><input type="number" id="gCtrl" min="0" max="250" step="1" inputmode="numeric" placeholder="mmHg"></div>
+  <label class="chk"><input type="checkbox" id="interc"><span class="tx">Malattia intercorrente grave, o un'aritmia nuova o non controllata<small>infezione grave, FA o altra tachiaritmia: niente aumenti di dose finché non si risolve</small></span></label>
+  <h4 id="hInter">Farmaci associati che cambiano la dose</h4>
+  <div id="interMava" class="hide">
+    <div class="riga"><span class="fl">Forte inibitore del CYP2C19<small>per esempio ticlopidina, fluconazolo, fluvoxamina</small></span><select id="i_m1"><option value="">—</option><option value="gia">in terapia da prima</option><option value="ora">avviato o aumentato ora</option></select></div>
+    <div class="riga"><span class="fl">Forte inibitore del CYP3A4<small>claritromicina, itraconazolo, ketoconazolo, voriconazolo, ritonavir, cobicistat, ceritinib, idelalisib, tucatinib</small></span><select id="i_m2"><option value="">—</option><option value="gia">in terapia da prima</option><option value="ora">avviato o aumentato ora</option></select></div>
+    <div class="riga"><span class="fl">Moderato inibitore del CYP2C19<small>per esempio fluconazolo, fluoxetina, omeprazolo 40 mg/die</small></span><select id="i_m3"><option value="">—</option><option value="gia">in terapia da prima</option><option value="ora">avviato o aumentato ora</option></select></div>
+    <div class="riga"><span class="fl">Moderato inibitore del CYP3A4<small>eritromicina, succo di pompelmo, <b>verapamil, diltiazem</b></small></span><select id="i_m4"><option value="">—</option><option value="gia">in terapia da prima</option><option value="ora">avviato o aumentato ora</option></select></div>
+    <div class="riga"><span class="fl">Debole inibitore del CYP2C19<small>cimetidina, citalopram, omeprazolo 20 mg/die, esomeprazolo</small></span><select id="i_m5"><option value="">—</option><option value="gia">in terapia da prima</option><option value="ora">avviato o aumentato ora</option></select></div>
+    <div class="riga"><span class="fl">Debole inibitore del CYP3A4<small>cimetidina, esomeprazolo, omeprazolo, pantoprazolo</small></span><select id="i_m6"><option value="">—</option><option value="gia">in terapia da prima</option><option value="ora">avviato o aumentato ora</option></select></div>
+    <div class="riga"><span class="fl">Forte induttore del CYP2C19 e del CYP3A4<small>rifampicina, apalutamide, enzalutamide, mitotano, fenitoina, carbamazepina, efavirenz, iperico</small></span><select id="i_m7"><option value="">—</option><option value="gia">in terapia da prima</option><option value="ora">avviato o aumentato ora</option><option value="stop">sospeso o ridotto ora</option></select></div>
+    <div class="riga"><span class="fl">Moderato o debole induttore del CYP2C19<small>letermovir, noretindrone, prednisone</small></span><select id="i_m8"><option value="">—</option><option value="gia">in terapia da prima</option><option value="ora">avviato o aumentato ora</option><option value="stop">sospeso o ridotto ora</option></select></div>
+    <div class="riga"><span class="fl">Moderato o debole induttore del CYP3A4<small>fenobarbital, primidone</small></span><select id="i_m9"><option value="">—</option><option value="gia">in terapia da prima</option><option value="ora">avviato o aumentato ora</option><option value="stop">sospeso o ridotto ora</option></select></div>
+  </div>
+  <div id="interAfi" class="hide">
+    <div class="riga"><span class="fl">Forte inibitore del CYP2C9<small>per esempio sulfafenazolo</small></span><select id="i_a1"><option value="">—</option><option value="gia">in terapia da prima</option><option value="ora">avviato o aumentato ora</option></select></div>
+    <div class="riga"><span class="fl">Moderato inibitore del CYP2C9 che inibisce anche CYP2D6 o CYP3A in modo moderato o forte<small>fluconazolo oltre una dose singola, adagrasib</small></span><select id="i_a2"><option value="">—</option><option value="gia">in terapia da prima</option><option value="ora">avviato o aumentato ora</option></select></div>
+    <div class="riga"><span class="fl">Debole inibitore del CYP2C9 che inibisce anche CYP2D6 o CYP3A in modo moderato o forte<small>fluvoxamina, voriconazolo</small></span><select id="i_a3"><option value="">—</option><option value="gia">in terapia da prima</option><option value="ora">avviato o aumentato ora</option><option value="stop">sospeso ora</option></select></div>
+    <div class="riga"><span class="fl">Amiodarone</span><select id="i_a4"><option value="">—</option><option value="gia">in terapia da prima</option><option value="ora">avviato ora</option><option value="stop">sospeso ora</option></select></div>
+    <div class="riga"><span class="fl">Forte induttore del CYP3A4 e moderato del CYP2C9<small>rifampicina, iperico</small></span><select id="i_a5"><option value="">—</option><option value="gia">in terapia da prima</option><option value="ora">avviato o aumentato ora</option></select></div>
+    <div class="riga"><span class="fl">Induttore moderato o forte del CYP3A4 o del CYP2C9<small>carbamazepina, rifabutina, efavirenz</small></span><select id="i_a6"><option value="">—</option><option value="gia">in terapia da prima</option><option value="ora">avviato o aumentato ora</option><option value="stop">sospeso ora</option></select></div>
+  </div>
+</div>
+<div class="card farm" id="outMI"></div>
+
+<div class="stage"><span class="stage-n">6</span><span class="stage-t">Ipotensione acuta con edema polmonare</span><span class="stage-w">Rec. Table 19, p. 3554 · schede tecniche</span></div>
+<div class="card">
+  <label class="chk"><input type="checkbox" id="ipo"><span class="tx">Ostruzione provocabile severa, con ipotensione ed edema polmonare acuto che non rispondono ai liquidi</span></label>
+</div>
+<div class="card farm" id="d_ipo"></div>
+
+<div class="stage"><span class="stage-n">7</span><span class="stage-t">Riduzione settale e pacing</span><span class="stage-w">Rec. Table 20, pp. 3556–3557 · Fig. 15, p. 3555 · Rec. Table 21, p. 3557</span></div>
+<div class="card">
+  <label class="chk"><input type="checkbox" id="imsam"><span class="tx">Insufficienza mitralica da SAM moderata o severa</span></label>
+  <label class="chk"><input type="checkbox" id="ladil"><span class="tx">Dilatazione atriale sinistra moderata o severa</span></label>
+  <label class="chk"><input type="checkbox" id="lesioni"><span class="tx">Altre lesioni da correggere in chirurgia<small>anomalie della mitrale — prolasso, lembi molto allungati, papillari anomali, tessuto accessorio —, o un'insufficienza mitralica che la riduzione settale da sola non corregge</small></span></label>
+  <div class="riga"><span class="fl">Spessore del setto al punto di contatto<small>mm, per la checklist della Fig. 15</small></span><input type="number" id="setto" min="5" max="60" step="1" inputmode="numeric" placeholder="mm"></div>
+  <label class="chk"><input type="checkbox" id="ctrSrt"><span class="tx">Controindicazioni a miectomia e alcolizzazione, o alto rischio di blocco dopo di esse</span></label>
+  <label class="chk"><input type="checkbox" id="icd"><span class="tx">Ha già un'indicazione all'ICD<small>la decisione sull'ICD è del Tool HCM SCD</small></span></label>
+</div>
+<div class="card" id="outSrt"></div>
+
+<div class="card"><h3>AHA/ACC 2024 a confronto — classi e livelli nel sistema americano, non tradotti</h3><div id="outAha"></div></div>
+<div class="card"><h3>Incoerenze della fonte e contrasti con le schede tecniche</h3><div id="outInc"></div></div>
+<div class="card"><h3>Limiti per questo paziente</h3><ul class="lista" id="limiti"></ul></div>
+
+<div class="foot">
+  <strong>Fonte.</strong> Arbelo E, Protonotarios A, Gimeno JR, et al. 2023 ESC Guidelines for the management of cardiomyopathies. <em>Eur Heart J</em> 2023;44:3503–3626, doi:10.1093/eurheartj/ehad194 — classe di Ross (p. 3539), ricerca dell'ostruzione (Rec. Table 16, p. 3549; Fig. 12, p. 3551), Fig. 13 (p. 3552), soglie, misure generali, farmaci e dosi (p. 3553), Rec. Table 18 (p. 3553), Rec. Table 19 e Fig. 14 (p. 3554), riduzione settale (pp. 3555–3556; Fig. 15, p. 3555; Rec. Table 20, pp. 3556–3557), pacing e ostruzione medioventricolare (Rec. Table 21, p. 3557), FA nella HCM (Rec. Table 11, p. 3543), farmaci in gravidanza (p. 3584; Rec. Table 32, p. 3585). <strong>A confronto</strong>: Ommen SR, Ho CY, Asif IM, et al. 2024 AHA/ACC/AMSSM/HRS/PACES/SCMR Guideline for the Management of Hypertrophic Cardiomyopathy. <em>Circulation</em> 2024, doi:10.1161/CIR.0000000000001250, pp. e1253, e1269–e1273, e1276, e1286; e le schede di confronto del progetto (pacing ESC 2021, gravidanza ESC 2025, aritmie ESC 2022). <strong>Schede tecniche</strong>, lette l'08/10/2026 (Camzyos, Myqorzo, Fenilefrina Aguettant, Lasix) e il 03/10/2026 (le altre); nel testo, accanto a ogni scheda, la data in cui AIFA o EMA l'ha resa disponibile: Camzyos e Myqorzo (EMA), Inderal 40 mg, Nadololo Cheplapharm, Seloken, Concor, Congescor, Bisoprololo EG, Tenormin, Atenololo AHCL, Isoptin, Dilzene, Ritmodan e Ritmodan Retard, Brevibloc, Fenilefrina Aguettant, Lasix (AIFA). Ogni numero mostrato porta la sua fonte.<br><br>
+  Strumento personale di studio e consultazione: <strong>non sostituisce il giudizio clinico, la scheda tecnica del farmaco né il team esperto di HCM</strong> che la fonte chiede per la riduzione settale. Non salva i dati e non li invia in rete.
+</div>
+</div>
+<script>
+(function () {
+  "use strict";
+
+  /* ═══ DATI ═══════════════════════════════════════════════════════════════
+     2023 ESC Guidelines for the management of cardiomyopathies.
+     Fig. 12, p. 3551 — eco a riposo, con Valsalva e in piedi; gradiente
+       massimo provocato >=50 -> gestione del LVOTO; altrimenti asintomatico
+       -> eco a 1 anno (nota a: eco da sforzo caso per caso), sintomatico ->
+       eco da sforzo (classe I) -> >=50 gestione del LVOTO, <50 terapia medica.
+     Rec. Table 16, p. 3549 — eco a riposo e con le manovre I B; eco da sforzo
+       nel sintomatico con gradiente <50 I B.
+     p. 3553 — LVOTO per convenzione >=30 mmHg; trattamento invasivo da >=50;
+       sotto 50 come la forma non ostruttiva, fra 30 e 50 la riduzione invasiva
+       solo in pochissimi casi selezionati, senza dati. Disopiramide di solito
+       400-600 mg/die; da evitare con glaucoma, prostatismo nell'uomo, altri
+       farmaci che allungano il QT (amiodarone, sotalolo); «may be used in
+       combination with verapamil». Verapamil da 40 mg x3 fino a 480 mg/die,
+       con cautela con ostruzione severa (>=100 mmHg) o PAPs alta. Diltiazem da
+       60 mg x3 fino a 360 mg/die. Inibitori della miosina: seconda linea, non
+       con la disopiramide, si' con betabloccanti o calcioantagonisti;
+       titolazione fino a 15 mg con l'eco secondo la scheda tecnica.
+     Rec. Table 18, p. 3553 — evitare digossina e vasodilatatori IIa C; FA
+       nuova o mal controllata: ritmo o frequenza prima della procedura IIa C.
+     Rec. Table 19, p. 3554 — betabloccante non vasodilatatore I B; verapamil
+       o diltiazem se il betabloccante non e' tollerato o e' controindicato
+       I B; disopiramide in aggiunta I B (nota d: QTc, ridurre sopra 500 ms);
+       mavacamten in aggiunta, adulto, IIa A; in monoterapia IIa B; betabloccanti
+       e.v. o per os e vasocostrittori nell'ipotensione con edema polmonare
+       IIa C; disopiramide in monoterapia IIb C; asintomatico, betabloccanti o
+       verapamil IIb C; diuretici a basse dosi IIb C. Fig. 14, stessa pagina.
+     Rec. Table 20, pp. 3556-3557 — SRT da team esperto I C; NYHA/Ross III-IV
+       con gradiente >=50 nonostante la terapia massima tollerata I B;
+       miectomia nel bambino e con lesioni da operare I C; sincope da sforzo
+       ricorrente IIa C; mitrale con IM non corretta dalla SRT IIa C; riparazione
+       dopo miectomia IIa C; NYHA II con IM da SAM, FA o atrio dilatato IIb C;
+       sostituzione dopo miectomia IIb C; ablazione chirurgica della FA IIb C.
+     Rec. Table 21, p. 3557 — pacing AV sequenziale IIb C; ICD bicamerale IIb C.
+     Fig. 15, p. 3555 — spessore minimo del setto anteriore 15 mm.
+     p. 3556 — alcol meno efficace con setto >=30 mm; difetto interventricolare
+       dopo miectomia con <=16 mm; alcol e metodi alternativi mai nel bambino.
+     Schede tecniche: le date e le sezioni sono accanto a ogni numero. */
+  var SOGLIE = { bmiAgg:30, umol:88.4, lvoto:30, tratt:50, vera:100, qtc:500,
+                 nadoA:50, nadoB:31, nadoC:10, biso:20, atenA:35, atenB:15, miEgfr:30, afiCl:30, furo:10,
+                 feAvvio:55, feSosp:50, feAfi40:40, gGiu:20, gSu:30, afi100:100,
+                 settoMax:30, settoVsd:16, settoMin:15, adulto:18, ross:5 };
+  var MDOSI = [2.5, 5, 10, 15], ADOSI = [5, 10, 15, 20];
+
+  var F12 = "ESC 2023, Fig. 12, p. 3551", R16 = "ESC 2023, Rec. Table 16, p. 3549", F13 = "ESC 2023, Fig. 13, p. 3552",
+      P53 = "ESC 2023, p. 3553", R18 = "ESC 2023, Rec. Table 18, p. 3553", R19 = "ESC 2023, Rec. Table 19, p. 3554",
+      R19c = "ESC 2023, Rec. Table 19, nota c, p. 3554", R19d = "ESC 2023, Rec. Table 19, nota d, p. 3554", F14 = "ESC 2023, Fig. 14, p. 3554",
+      P55 = "ESC 2023, p. 3555", F15 = "ESC 2023, Fig. 15, p. 3555", R20 = "ESC 2023, Rec. Table 20, p. 3556", R20b = "ESC 2023, Rec. Table 20, p. 3557",
+      P56 = "ESC 2023, p. 3556", R21 = "ESC 2023, Rec. Table 21, p. 3557", P57 = "ESC 2023, p. 3557", R11 = "ESC 2023, Rec. Table 11, p. 3543",
+      P84 = "ESC 2023, p. 3584", R32 = "ESC 2023, Rec. Table 32, p. 3585", P39 = "ESC 2023, p. 3539";
+  var CAM = "Camzyos", MYQ = "Myqorzo";
+
+  /* ═══ SCRITTURA (pure) ═══════════════════════════════════════════════ */
+  function r1(x) { return Math.round(x * 10) / 10; }
+  function nf(x, d) { if (d === 0) x = Math.round(x); else x = r1(x); return String(x).replace(".", ","); }
+  function md(x) { return String(x).replace(".", ",") + " mg"; }
+  function pgs(p) { return ' <span class="pg">' + p + "</span>"; }
+  function corPill(c, l) { var k = { "I":"c1", "IIa":"c2a", "IIb":"c2b", "III":"c3" }[c]; return '<span class="cor ' + k + '">' + c + "</span>" + (l ? ' <span class="cor ' + k + '" style="opacity:.85">' + l + "</span>" : ""); }
+  function ahaPill(c, l) { var k = { "1":"c1", "2a":"c2a", "2b":"c2b", "3: Harm":"c3", "3: No Benefit":"c3nb" }[c]; return '<span class="aha">AHA/ACC 2024</span> <span class="cor ' + k + '">' + c + '</span> <span class="cor ' + k + '" style="opacity:.85">' + l + "</span>"; }
+  function st(nome, sez) { return ' <span class="pg">scheda tecnica (' + nome + ", " + sez + ")</span>"; }
+  function stT(nome, sez) { return ' <span class="st">SCHEDA TECNICA</span> <span class="pg">' + nome + ", " + sez + "</span>"; }
+  function dv() { return ' <span class="dv">DA VERIFICARE</span>'; }
+
+  /* ═══ RENE (pure) ════════════════════════════════════════════════════ */
+  function creatMg(s) {
+    if (s.creat === null) return { v:null };
+    if (s.ucr === "umol") {
+      if (s.creat < 18 || s.creat > 1800) return { v:null, fuori:true };
+      return { v:s.creat / SOGLIE.umol, umol:s.creat };
+    }
+    if (s.creat < 0.2 || s.creat > 20) return { v:null, fuori:true };
+    return { v:s.creat, umol:s.creat * SOGLIE.umol };
+  }
+
+  // Cockcroft-Gault sul peso REALE, che decide (decisione del medico del
+  // 03/10/2026). Con BMI >=30 accanto il valore sul peso aggiustato: ideale di
+  // Devine + 0,4 x l'eccesso, come negli altri tool del progetto. Sotto i 18
+  // anni la formula non vale e lo strumento non la calcola.
+  function clearance(s) {
+    var o = { clcr:null, agg:null, bmi:null, ibw:null, pesoAgg:null, mg:null, umol:null, manca:[], fuori:false, kids:false };
+    if (s.peso !== null && s.alt !== null && s.alt > 0) o.bmi = s.peso / Math.pow(s.alt / 100, 2);
+    var c = creatMg(s);
+    o.mg = c.v; o.umol = c.umol || null;
+    if (s.eta !== null && s.eta < SOGLIE.adulto) { o.kids = true; return o; }
+    if (s.eta === null) o.manca.push("età");
+    else if (s.eta > 110) o.manca.push("età fuori scala");
+    if (!s.sesso) o.manca.push("sesso");
+    if (s.peso === null) o.manca.push("peso");
+    else if (s.peso < 25 || s.peso > 250) o.manca.push("peso fuori scala (25–250 kg)");
+    if (s.creat === null) o.manca.push("creatinina");
+    else if (c.fuori) { o.fuori = true; o.manca.push("creatinina fuori scala per l'unità scelta"); }
+    if (o.manca.length) return o;
+    var f = s.sesso === "f" ? 0.85 : 1;
+    o.clcr = ((140 - s.eta) * s.peso * f) / (72 * c.v);
+    if (o.bmi !== null && o.bmi >= SOGLIE.bmiAgg) {
+      o.ibw = (s.sesso === "f" ? 45.5 : 50) + 0.9 * (s.alt - 152.4);
+      if (o.ibw > 0 && s.peso > o.ibw) { o.pesoAgg = o.ibw + 0.4 * (s.peso - o.ibw); o.agg = ((140 - s.eta) * o.pesoAgg * f) / (72 * c.v); }
+    }
+    return o;
+  }
+  function rene(s) {
+    var c = clearance(s), eg = (s.egfr !== null && s.egfr >= 1 && s.egfr <= 200) ? s.egfr : null;
+    return { cl:c, crcl:s.dialisi ? null : c.clcr, agg:s.dialisi ? null : c.agg, egfr:s.dialisi ? null : eg,
+             egfrFuori:s.egfr !== null && eg === null, dialisi:s.dialisi, kids:c.kids };
+  }
+
+  // Nadololo Cheplapharm 4.2, clearance in ml/min/1,73 m2: >50 ogni 24 h;
+  // 31-50 ogni 24-36 h; 10-30 ogni 24-48 h; <10 ogni 40-60 h. Fra 30 e 31 la
+  // tabella non dice: lo strumento prende l'intervallo piu' lungo.
+  var NADO_INT = ["ogni 24 h", "ogni 24–36 h", "ogni 24–48 h", "ogni 40–60 h"], NADO_FASCIA = ["&gt;50", "31–50", "10–30", "&lt;10"];
+  function nadoBanda(crcl) { if (crcl === null) return null; if (crcl > SOGLIE.nadoA) return 0; if (crcl >= SOGLIE.nadoB) return 1; if (crcl >= SOGLIE.nadoC) return 2; return 3; }
+  // Tenormin e Atenololo AHCL 4.2: >35 nessuna modifica; 15-35; <15; emodialisi.
+  function atenBanda(crcl) { if (crcl === null) return null; if (crcl > SOGLIE.atenA) return 0; if (crcl >= SOGLIE.atenB) return 1; return 2; }
+  // Bisoprololo EG 4.2: ClCr <20 -> non oltre 10 mg/die; non dializzabile.
+  function bisoTetto(rn) { if (rn.dialisi) return true; if (rn.crcl === null) return null; return rn.crcl < SOGLIE.biso; }
+  // Camzyos 4.2: eGFR 30-89 mL/min/1,73 m2 nessun adeguamento; <30 nessuna
+  // raccomandazione (non studiato; 5.2: nessuno studio dedicato). Decide
+  // l'eGFR, nell'unita' della scheda; senza eGFR decide la Cockcroft-Gault sul
+  // peso reale. La dialisi la scheda non la nomina: sta sotto 30. Sotto 30
+  // nessuna dose (decisione del medico, 09/10/2026).
+  function mavaRene(rn) {
+    if (rn.dialisi) return "sotto";
+    if (rn.egfr !== null && rn.egfr !== undefined) return rn.egfr < SOGLIE.miEgfr ? "sotto" : "ok";
+    if (rn.crcl === null || rn.crcl === undefined) return "manca";
+    return rn.crcl < SOGLIE.miEgfr ? "sotto" : "ok";
+  }
+  // Myqorzo 4.2: eGFR 30-89 «mL/min», senza 1,73 m2; <30 nessuna
+  // raccomandazione (non studiato; 5.2: effetti non noti). Lettura prudente:
+  // sotto 30 l'eGFR o la Cockcroft-Gault, e basta una delle due. Sotto 30
+  // nessuna dose (decisione del medico, 09/10/2026).
+  function afiRene(rn) {
+    if (rn.dialisi) return { esito:"sotto", dialisi:true };
+    var eg = rn.egfr !== null && rn.egfr < SOGLIE.afiCl, cl = rn.crcl !== null && rn.crcl < SOGLIE.afiCl;
+    if (eg || cl) return { esito:"sotto", eg:eg, cl:cl };
+    if (rn.egfr === null && rn.crcl === null) return { esito:"manca" };
+    return { esito:"ok" };
+  }
+  // Lasix 4.2: «VFG <10 ml/min» aggiustamento senza dire quale.
+  function furoRene(rn) {
+    if (rn.dialisi) return "sotto";
+    if ((rn.egfr !== null && rn.egfr < SOGLIE.furo) || (rn.crcl !== null && rn.crcl < SOGLIE.furo)) return "sotto";
+    if (rn.egfr === null && rn.crcl === null) return "manca";
+    return "ok";
+  }
+  // Soglie che il peso reale e il peso aggiustato mettono ai lati opposti.
+  function incroci(rn) {
+    var o = [], a = rn.crcl, b = rn.agg;
+    if (a === null || b === null || rn.dialisi) return o;
+    if ((a > SOGLIE.nadoA) !== (b > SOGLIE.nadoA)) o.push({ f:"nadololo", s:"50" });
+    if ((a >= SOGLIE.nadoB) !== (b >= SOGLIE.nadoB)) o.push({ f:"nadololo", s:"31" });
+    if ((a >= SOGLIE.nadoC) !== (b >= SOGLIE.nadoC)) o.push({ f:"nadololo", s:"10" });
+    if ((a > SOGLIE.atenA) !== (b > SOGLIE.atenA)) o.push({ f:"atenololo", s:"35" });
+    if ((a >= SOGLIE.atenB) !== (b >= SOGLIE.atenB)) o.push({ f:"atenololo", s:"15" });
+    if ((a < SOGLIE.biso) !== (b < SOGLIE.biso)) o.push({ f:"bisoprololo", s:"20" });
+    // il mavacamten guarda la Cockcroft-Gault solo senza l'eGFR del laboratorio
+    if (rn.egfr === null && (a < SOGLIE.miEgfr) !== (b < SOGLIE.miEgfr)) o.push({ f:"mavacamten", s:"30" });
+    if ((a < SOGLIE.afiCl) !== (b < SOGLIE.afiCl)) o.push({ f:"aficamten", s:"30" });
+    if ((a < SOGLIE.furo) !== (b < SOGLIE.furo)) o.push({ f:"furosemide", s:"10" });
+    return o;
+  }
+  function avvisoAgg(rn, chi) {
+    var x = incroci(rn), i, t = [];
+    for (i = 0; i < x.length; i++) if (x[i].f === chi) t.push(x[i].s);
+    if (!t.length) return "";
+    return "<b>Peso aggiustato</b>: clearance " + nf(rn.agg) + " mL/min, dall'altra parte della soglia di " + t.join(" e di ") + ". Decide il peso reale (decisione del medico, 03/10/2026); la scelta resta clinica.";
+  }
+
+  /* ═══ L'OSTRUZIONE: la Fig. 12 (pura) ════════════════════════════════ */
+  function gOk(v) { return v !== null && v >= 0 && v <= 250; }
+  function catGrad(g) { if (g === null) return null; if (g >= SOGLIE.tratt) return "50"; if (g >= SOGLIE.lvoto) return "30"; return "0"; }
+  function ostruzione(s) {
+    var o = { rip:null, val:null, sf:null, letto:null, max:null, via:null, da:"", manca:[], fuori:[], sint:null };
+    var nomi = { gRip:"a riposo", gVal:"provocato al letto", gSf:"da sforzo" }, k = ["gRip", "gVal", "gSf"], i;
+    for (i = 0; i < k.length; i++) {
+      if (s[k[i]] === null) continue;
+      if (!gOk(s[k[i]])) { o.fuori.push(nomi[k[i]]); continue; }
+      if (k[i] === "gRip") o.rip = s.gRip; else if (k[i] === "gVal") o.val = s.gVal; else o.sf = s.gSf;
+    }
+    if (o.rip !== null || o.val !== null) o.letto = Math.max(o.rip === null ? -1 : o.rip, o.val === null ? -1 : o.val);
+    if (o.letto !== null || o.sf !== null) o.max = Math.max(o.letto === null ? -1 : o.letto, o.sf === null ? -1 : o.sf);
+    if (s.nyha) o.sint = s.nyha !== "1" || s.sinc; else if (s.sinc) o.sint = true;
+    if (o.max === null) { o.via = "manca"; o.manca.push(o.fuori.length ? "gradiente " + o.fuori.join(" e ") + " fuori scala (0–250 mmHg)" : "serve il gradiente a riposo e con le manovre al letto (passo 1)"); return o; }
+    if (o.letto !== null && o.letto >= SOGLIE.tratt) { o.via = "f14"; o.da = "letto"; return o; }
+    if (o.sf !== null && o.sf >= SOGLIE.tratt) { o.via = "f14"; o.da = "sforzo"; return o; }
+    if (o.letto === null) { o.via = "manca"; o.manca.push("serve il gradiente a riposo e con le manovre al letto, prima dell'eco da sforzo (passo 1)"); return o; }
+    if (o.sint === null) { o.via = "manca"; o.manca.push("servono i sintomi (passo 1)"); return o; }
+    if (!o.sint) { o.via = "anno"; return o; }
+    if (o.sf === null) { o.via = "sforzo"; return o; }
+    o.via = "nonostr";
+    return o;
+  }
+
+  /* ═══ LA SCALA: Fig. 14 e Rec. Table 19 (pura) ═══════════════════════ */
+  function disoEsclusa(s) {
+    var o = [];
+    if (s.glauc) o.push("glaucoma");
+    if (s.prost && s.sesso !== "f") o.push("prostatismo");
+    if (s.qtfarm) o.push("altri farmaci che allungano il QT, come amiodarone e sotalolo");
+    return o;
+  }
+  // Perche' il mavacamten non si puo' INIZIARE (la riga IIa A nomina lui).
+  function miNonAvviabile(s) {
+    var o = [];
+    if (s.eta !== null && s.eta < SOGLIE.adulto) o.push("età sotto i 18 anni: la riga è per l'adulto" + pgs(R19));
+    if (s.fe !== null && s.fe < SOGLIE.feAvvio) o.push("FEVS " + nf(s.fe, 0) + "%: sotto il 55% non si inizia" + st(CAM, "4.2"));
+    if (s.sesso === "f" && (s.grav === "gr" || s.grav === "nocontr")) o.push((s.grav === "gr" ? "gravidanza" : "età fertile senza contraccezione efficace") + ": controindicato" + st(CAM, "4.3"));
+    return o;
+  }
+  // Dove Camzyos non da' una dose perche' non e' stato studiato (rene sotto 30
+  // o dialisi, Child-Pugh C) la riga resta, ma lo strumento non ne propone
+  // l'avvio: non e' una controindicazione (decisione del medico, 09/10/2026).
+  function miSenzaDose(s) {
+    var rn = rene(s), mr = mavaRene(rn), o = [];
+    if (mr === "manca" && !rn.kids && s.cp !== "c") return "<b>funzione renale —</b> (passo 3): serve l'eGFR del laboratorio o la Cockcroft-Gault, perché sotto 30 la scheda non dà una dose" + st(CAM, "4.2");
+    if (mr === "sotto") o.push(rn.dialisi ? "dialisi" : (rn.egfr !== null ? "eGFR " + nf(rn.egfr, 0) + " mL/min/1,73 m² (&lt;30)" : "Cockcroft-Gault " + nf(rn.crcl) + " mL/min (&lt;30), eGFR non indicato"));
+    if (s.cp === "c") o.push("Child-Pugh C");
+    return o.length ? "<b>" + o.join(" e ") + "</b>: la scheda non dà una dose, perché il mavacamten non è stato studiato" + st(CAM, "4.2") + "; nessuna dose, decide lo specialista (passo 5)" : "";
+  }
+  function opz(id, c, l, src, t) { return { id:id, c:c, l:l, src:src, t:t, no:[], ris:[] }; }
+  function opzSrt(perche) { return opz("srt", "", "", R20, "<b>Riduzione settale</b>: " + perche + " — le righe e la procedura al passo 7"); }
+
+  function scala(s, os) {
+    var v = { gate:null, passo:null, base:null, opz:[], note:[], fine:false, perche:"", insieme:false };
+    if (os.via === "manca") { v.gate = "manca"; v.perche = os.manca[0]; return v; }
+    if (os.via !== "f14") { v.gate = os.via; return v; }
+    if (os.sint === null) { v.gate = "manca"; v.perche = "servono i sintomi (passo 1)"; return v; }
+    var inCorso = s.bb === "in" || s.cc === "in" || s.diso === "in" || s.mi === "in";
+    if (!os.sint) { v.gate = "asint"; v.controllato = inCorso; return v; }
+    if (!s.bb) { v.gate = "manca"; v.perche = "serve sapere se il betabloccante è stato provato (passo 2)"; return v; }
+    if (s.diso === "in" && s.mi === "in") { v.gate = "insieme"; return v; }
+    if (s.bb === "no") {
+      v.passo = 1;
+      v.opz.push(opz("bb", "I", "B", R19, "<b>Betabloccante non vasodilatatore</b>, titolato alla massima dose tollerata: la prima linea"));
+      if (s.cc === "in") v.note.push("Verapamil o diltiazem in corso senza un betabloccante provato: la fonte li dà quando il betabloccante non è tollerato o è controindicato" + pgs(R19) + ", e Isoptin vieta in generale l'associazione con i betabloccanti" + st("Isoptin", "4.3") + ". Sostituire o associare è una scelta clinica.");
+      return v;
+    }
+    if (s.bb === "ko") {
+      if (!s.cc) { v.gate = "manca"; v.perche = "serve sapere se verapamil o diltiazem sono stati provati (passo 2)"; return v; }
+      if (s.cc === "no") {
+        v.passo = 2;
+        v.opz.push(opz("vera", "I", "B", R19, "<b>Verapamil</b>, titolato alla massima dose tollerata"));
+        v.opz.push(opz("dilt", "I", "B", R19, "<b>Diltiazem</b>, titolato alla massima dose tollerata"));
+        return v;
+      }
+      v.base = s.cc === "in" ? "cc" : null;
+    } else v.base = "bb";
+    if (s.bb === "in" && s.cc === "in") v.note.push("Betabloccante e verapamil o diltiazem insieme: nella scala il calcioantagonista sta al posto del betabloccante non tollerato, non accanto" + pgs(R19) + "; Isoptin vieta in generale l'associazione con i betabloccanti" + st("Isoptin", "4.3") + ", e con l'inibitore della miosina la sicurezza di betabloccante più verapamil o diltiazem non è stabilita" + st(CAM, "4.4") + ".");
+    v.passo = 3;
+    if (!s.diso || !s.mi) { v.gate = "manca"; v.perche = "serve sapere se disopiramide e inibitore della miosina sono stati provati (passo 2)"; return v; }
+    var dEx = disoEsclusa(s), mEx = miNonAvviabile(s), sDose = miSenzaDose(s), i, od, om;
+    var qtAlto = s.qtc !== null && s.qtc > SOGLIE.qtc;
+    function escludiDiso(o) {
+      if (s.diso === "ko") o.no.push("non tollerata o controindicata (passo 2)");
+      if (dEx.length) o.no.push("da evitare con " + dEx.join(", ") + pgs(P53));
+      if (qtAlto) o.no.push("QTc " + s.qtc + " ms: in titolazione la dose si riduce già sopra 500 ms" + pgs(R19d) + ", e la scheda tecnica la controindica con un QT allungato preesistente, senza soglia" + st("Ritmodan", "4.3") + "; lettura prudente, non si inizia");
+    }
+    function escludiMi(o) {
+      if (s.mi === "ko") o.no.push("non tollerato o controindicato (passo 2)");
+      for (i = 0; i < mEx.length; i++) o.no.push(mEx[i]);
+      if (s.fe === null && s.mi !== "ko") o.ris.push("serve la FEVS (passo 1): sotto il 55% non si inizia" + st(CAM, "4.2"));
+      if (sDose) o.ris.push(sDose);
+    }
+    if (v.base) {
+      var con = v.base === "bb" ? "al betabloccante" : "a verapamil o diltiazem, perché il betabloccante non si può dare";
+      if (s.diso === "in") {
+        v.fine = true;
+        om = opz("miSost", "IIa", "A", R19, "<b>Mavacamten al posto della disopiramide</b>, in aggiunta " + con + ": il testo lo fa seconda linea quando betabloccanti, calcioantagonisti e/o disopiramide non bastano o non sono tollerati" + pgs(P53) + "; mai insieme alla disopiramide");
+        escludiMi(om);
+        v.opz.push(om, opzSrt("ancora sintomatico con il terzo gradino della Fig. 14"));
+      } else if (s.mi === "in") {
+        v.fine = true;
+        v.opz.push(opzSrt("ancora sintomatico con il terzo gradino della Fig. 14"));
+        v.note.push("Prima di passare oltre: la dose dell'inibitore la decide l'eco (passo 5), e senza beneficio dopo 4–6 mesi alla dose massima tollerata se ne considera la sospensione" + st(CAM, "4.2") + ". La disopiramide al posto dell'inibitore la fonte non la descrive.");
+      } else {
+        od = opz("diso", "I", "B", R19, "<b>Disopiramide</b> in aggiunta " + con + ", titolata alla massima dose tollerata");
+        om = opz("mava", "IIa", "A", R19, "<b>Mavacamten</b> in aggiunta " + con + ", nell'adulto, con la sorveglianza eco della FEVS");
+        escludiDiso(od); escludiMi(om);
+        v.opz.push(od, om);
+        if (od.no.length && om.no.length) { v.fine = true; v.opz.push(opzSrt("nessuno dei due farmaci del terzo gradino è possibile")); }
+      }
+    } else {
+      if (s.diso === "in") {
+        v.fine = true;
+        om = opz("miMono", "IIa", "B", R19, "<b>Mavacamten in monoterapia al posto della disopiramide</b>: la riga lo vuole quando anche la disopiramide non è tollerata o è controindicata; il testo lo fa seconda linea anche quando non basta" + pgs(P53));
+        escludiMi(om);
+        v.opz.push(om, opzSrt("ancora sintomatico con la disopiramide in monoterapia"));
+      } else if (s.mi === "in") {
+        v.fine = true;
+        v.opz.push(opzSrt("ancora sintomatico con l'inibitore della miosina in monoterapia"));
+      } else {
+        od = opz("disoMono", "IIb", "C", R19, "<b>Disopiramide in monoterapia</b>, titolata alla massima dose tollerata: betabloccanti e verapamil/diltiazem non tollerati o controindicati");
+        om = opz("miMono", "IIa", "B", R19, "<b>Mavacamten in monoterapia</b>, nell'adulto, con la sorveglianza eco della FEVS");
+        escludiDiso(od); escludiMi(om);
+        if (!od.no.length && !om.no.length) om.ris.push("la riga IIa B lo vuole quando anche la disopiramide non è tollerata o è controindicata" + pgs(R19) + ", e così il testo" + pgs(P53) + ": qui la disopiramide è ancora possibile");
+        v.opz.push(od, om);
+        if (od.no.length && om.no.length) { v.fine = true; v.opz.push(opzSrt("nessuna monoterapia è possibile")); }
+      }
+    }
+    return v;
+  }
+
+  /* ═══ LA RIDUZIONE SETTALE: Rec. Table 20 e 21 (pura) ══════════════════ */
+  function riduzione(s, os, sc) {
+    var o = { gate:null, righe:[], proc:[], agg:[], pace:[], note:[], pronto:false };
+    if (os.via === "manca" || (os.via === "f14" && os.sint === null)) { o.gate = "manca"; return o; }
+    if (os.via !== "f14") { o.gate = "sotto50"; return o; }
+    if (!os.sint) { o.gate = "asint"; return o; }
+    var fine = sc.fine, ny = s.nyha, faSi = s.fa === "nuova" || s.fa === "contr" || s.fa === "perm";
+    if (ny === "3" || ny === "4") o.righe.push({ t:"Sintomi in classe NYHA/Ross III–IV, gradiente ≥50 mmHg a riposo o massimo provocato, nonostante la terapia medica massima tollerata", c:"I", l:"B", src:R20 });
+    if (s.sinc) o.righe.push({ t:"Sincope da sforzo ricorrente causata da un gradiente ≥50 mmHg, nonostante la terapia medica ottimale", c:"IIa", l:"C", src:R20 });
+    if (ny === "2") {
+      var cond = [];
+      if (s.imsam) cond.push("IM da SAM moderata o severa");
+      if (faSi) cond.push("FA");
+      if (s.ladil) cond.push("atrio sinistro dilatato in modo moderato o severo");
+      if (cond.length) o.righe.push({ t:"NYHA II refrattaria ai farmaci, gradiente ≥50 mmHg (sforzo o Valsalva) e " + cond.join(", ") + " — solo in centri esperti con basse complicanze documentate", c:"IIb", l:"C", src:R20 });
+      else o.note.push("NYHA II senza IM da SAM, FA o atrio sinistro dilatato: per la riduzione settale non c'è una riga ESC" + pgs(R20) + (s.fa ? "" : "; la FA non è indicata (passo 2)") + ".");
+    }
+    o.pronto = o.righe.length > 0 && fine;
+    if (s.eta !== null && s.eta < SOGLIE.adulto) o.proc.push({ t:"<b>Età pediatrica</b> — miectomia, non alcolizzazione", c:"I", l:"C", src:R20, x:"Alcolizzazione e metodi alternativi non si usano nel bambino fuori dalla sperimentazione" + pgs(P56) + "; nel lattante e nel bambino piccolo con anulus aortico troppo piccolo, la Konno modificata" + pgs(P56) + ". → progetto Distillati-cardio-pediatria." });
+    else if (s.lesioni) o.proc.push({ t:"Lesioni da correggere in chirurgia: <b>miectomia, non alcolizzazione</b>", c:"I", l:"C", src:R20, x:"" });
+    else o.proc.push({ t:"<b>Miectomia o alcolizzazione</b>: nessun RCT; decidono l'anatomia del tratto di efflusso e della mitrale e l'esperienza del centro" + pgs(P56), c:"", l:"", src:"", x:"Alcol: blocco AV nel 7–20% e reintervento nel 7–20%, più che dopo la miectomia; con entrambe il rischio di blocco è massimo con una malattia di conduzione preesistente" + pgs(P56) + "." + (s.eta === null ? " Età non indicata: nel bambino si fa la miectomia (I C)." : "") });
+    if (s.setto !== null) {
+      if (s.setto < 5 || s.setto > 60) o.note.push("Spessore del setto fuori scala (5–60 mm).");
+      else {
+        if (s.setto < SOGLIE.settoMin) o.note.push("Setto di " + s.setto + " mm: sotto lo spessore minimo del setto anteriore della checklist, 15 mm" + pgs(F15) + ".");
+        if (s.setto <= SOGLIE.settoVsd) o.note.push("Setto di " + s.setto + " mm al punto di contatto (≤16): dopo la miectomia sale il rischio di difetto interventricolare; con l'alcol è rarissimo, e si possono considerare anche pacing bicamerale o chirurgia della mitrale" + pgs(P56) + ".");
+        if (s.setto >= SOGLIE.settoMax) o.note.push("Setto di " + s.setto + " mm (≥30): l'alcolizzazione può rendere meno, con pochi dati" + pgs(P56) + ".");
+      }
+    }
+    if (s.lesioni) o.agg.push({ t:"Riparazione o sostituzione mitralica se l'IM moderata o severa non si corregge con la sola riduzione settale", c:"IIa", l:"C", src:R20 });
+    if (faSi) o.agg.push({ t:"Ablazione chirurgica della FA e/o chiusura dell'auricola sinistra durante la miectomia, se la FA è sintomatica", c:"IIb", l:"C", src:R20b });
+    var sinus = s.fa !== "perm";
+    if (s.ctrSrt) o.pace.push(sinus ? { t:"<b>Pacing AV sequenziale</b> con intervallo AV ottimale, per ridurre il gradiente o poter titolare betabloccanti e/o verapamil: ritmo sinusale, sintomi refrattari, controindicazioni a miectomia e alcol o alto rischio di blocco dopo di esse", c:"IIb", l:"C", src:R21 } : { t:"Pacing AV sequenziale: la riga vuole il ritmo sinusale, e con la FA permanente non si applica", c:"", l:"", src:R21 });
+    if (s.icd) o.pace.push(sinus ? { t:"<b>ICD bicamerale</b> invece del monocamerale, per ridurre il gradiente o facilitare betabloccanti e/o verapamil: ritmo sinusale e sintomi refrattari", c:"IIb", l:"C", src:R21 } : { t:"ICD bicamerale per il gradiente: la riga vuole il ritmo sinusale, e con la FA permanente non si applica", c:"", l:"", src:R21 });
+    return o;
+  }
+
+  /* ═══ MAVACAMTEN: Camzyos 4.2 (Fig. 1–4, Tab. 1), 4.3, 4.5 (Tab. 2) (pura) ═
+     Inizio: FEVS >=55%; lento o non determinato 2,5 mg (massimo 5), gli altri
+     5 mg (massimo 15); Child-Pugh A-B 2,5 mg. Settimane 4 e 8: gradiente con
+     Valsalva <20 -> un livello sotto (a 2,5 mg si sospende), >=20 si mantiene;
+     nelle prime 12 settimane non si sale. Sospeso alla settimana 4 (lento):
+     alla 8 si riprende 2,5 mg con gradiente >=20. Sospeso alla 8: alla 12 si
+     riprende 2,5 mg con FEVS >=50%. Mantenimento: FEVS <50% sospendere (Fig.
+     4); 50-<55 mantenere, controllo a 3 mesi; >=55 e gradiente <30 mantenere,
+     ogni 6 mesi; >=55 e >=30 un livello sopra, controllo a 4 settimane, poi 8
+     settimane invariata; un altro aumento dopo 3 mesi alla dose; lento: 2,5 ->
+     5 mg, controlli a 4 e 8 settimane. Fig. 4: eco ogni 4 settimane finche'
+     FEVS >=50%, poi il livello inferiore (a 2,5 si riprende 2,5); stop
+     definitivo dopo la seconda FEVS <50% a 2,5 mg. Malattia intercorrente o
+     aritmia non controllata: niente aumenti. 4-6 mesi alla dose massima
+     tollerata senza beneficio: considerare l'interruzione.
+     Rene sotto 30 o dialisi, Child-Pugh C: la scheda non da' una dose (non
+     studiato, 4.2 e 5.2) e lo strumento nemmeno, ne' avvio ne' titolazione:
+     decide lo specialista. Stato «nd», non «no»: non e' una controindicazione
+     (decisione del medico, 09/10/2026). */
+  function mGiu(d) { var i = MDOSI.indexOf(d); return i > 0 ? MDOSI[i - 1] : 0; }
+  function mSu(d, max) { var i = MDOSI.indexOf(d); if (i < 0 || i === MDOSI.length - 1) return null; return MDOSI[i + 1] <= max ? MDOSI[i + 1] : null; }
+  function pres(m) { return m === "gia" || m === "ora"; }
+
+  function mInter(s, fase, dose) {
+    var o = { ctr:[], azioni:[], righe:[], noAum:false, avvio25:false, maxInd:null };
+    var L = s.cyp === "lento", ND = s.cyp === "nd", N = s.cyp === "norm", LND = L || ND, avvio = fase === "avvio";
+    var T = st(CAM, "4.2 Tab. 1, 4.5 Tab. 2"), F4 = "; FEVS dopo 4 settimane, poi di nuovo la titolazione";
+    function ora(m) { return !avvio && m === "ora"; }
+    function giu(t, sosp4) { o.azioni.push({ dose:dose === null ? null : mGiu(dose), sosp4:!!sosp4, t:t }); o.noAum = true; }
+    var m1 = s.i_m1, m2 = s.i_m2, m3 = s.i_m3, m4 = s.i_m4, m5 = s.i_m5, m6 = s.i_m6, m7 = s.i_m7, m8 = s.i_m8, m9 = s.i_m9;
+    if (!s.cyp && (m1 || m2 || m3 || m4 || m5 || m6 || m7 || m8 || m9)) { o.righe.push("Per leggere le interazioni serve il fenotipo CYP2C19."); return o; }
+    if (pres(m1) && pres(m2)) o.ctr.push("un forte inibitore del CYP2C19 insieme a un forte inibitore del CYP3A4: controindicato con ogni fenotipo" + st(CAM, "4.3"));
+    if (pres(m2)) { if (LND) o.ctr.push("forte inibitore del CYP3A4 con il fenotipo " + (ND ? "non ancora determinato" : "lento") + ": controindicato" + st(CAM, "4.3")); else o.righe.push("Forte inibitore del CYP3A4: nessun adeguamento" + F4 + T + "."); }
+    if (pres(m1)) {
+      if (L) o.righe.push("Forte inibitore del CYP2C19, metabolizzatore lento: nessun adeguamento" + F4 + T + ".");
+      else if (ND) { if (ora(m1)) giu("Forte inibitore del CYP2C19 avviato, fenotipo non determinato: da 5 a 2,5 mg, o sospendere se è a 2,5 mg" + F4 + T); else o.righe.push("Forte inibitore del CYP2C19, fenotipo non determinato: la dose iniziale di 2,5 mg non cambia" + T + "."); }
+      else if (N) {
+        if (avvio) { o.avvio25 = true; o.righe.push("Forte inibitore del CYP2C19: si inizia a 2,5 mg" + T + "."); }
+        else if (m1 === "ora") { o.azioni.push({ dose:dose === null ? null : (dose === 15 ? 5 : (dose === 10 || dose === 5 ? 2.5 : 0)), t:"Forte inibitore del CYP2C19 avviato: da 15 a 5 mg, da 10 o 5 a 2,5 mg, sospendere se è a 2,5 mg" + F4 + T }); o.noAum = true; }
+        else o.righe.push("Forte inibitore del CYP2C19 già in terapia: se c'era prima del mavacamten, si è iniziato a 2,5 mg; se è stato avviato in corso, la dose è stata ridotta allora; poi FEVS a 4 settimane e la titolazione" + T + ".");
+      }
+    }
+    if (pres(m3)) {
+      if (L) o.righe.push("Moderato inibitore del CYP2C19, metabolizzatore lento: nessun adeguamento" + F4 + T + ".");
+      else if (ND) { if (ora(m3)) giu("Moderato inibitore del CYP2C19 avviato, fenotipo non determinato: da 5 a 2,5 mg, o sospendere se è a 2,5 mg" + F4 + T); else o.righe.push("Moderato inibitore del CYP2C19, fenotipo non determinato: la dose iniziale di 2,5 mg non cambia" + T + "."); }
+      else { if (ora(m3)) giu("Moderato inibitore del CYP2C19 avviato: un livello di dose in meno, o sospendere se è a 2,5 mg" + F4 + T); else o.righe.push("Moderato inibitore del CYP2C19: la dose iniziale di 5 mg non cambia" + T + "."); }
+    }
+    function cyp3a4(m, nome) {
+      if (!pres(m)) return;
+      if (LND) { if (ora(m)) giu(nome + " del CYP3A4 avviato o aumentato in corso, fenotipo lento o non determinato: da 5 a 2,5 mg; se è a 2,5 mg, sospendere per 4 settimane" + F4 + T, true); else o.righe.push(nome + " del CYP3A4 già in terapia all'inizio: la dose iniziale di 2,5 mg non cambia" + T + "."); }
+      else o.righe.push(nome + " del CYP3A4: nessun adeguamento" + F4 + T + ".");
+    }
+    cyp3a4(m4, "Moderato inibitore"); cyp3a4(m6, "Debole inibitore");
+    if (pres(m5)) o.righe.push("Debole inibitore del CYP2C19: " + (LND ? "nessun adeguamento della dose" : "nessuna riduzione prestabilita") + "; FEVS dopo 4 settimane, poi di nuovo la titolazione, con la dose secondo la clinica" + T + ".");
+    if (pres(m7)) { o.righe.push("Forte induttore del CYP2C19 e del CYP3A4: l'associazione non è raccomandata" + st(CAM, "4.5") + "; se c'è, gradiente e FEVS dopo 4 settimane e dose secondo la clinica" + (LND ? ", massimo 5 mg" : "") + T + "."); if (LND) o.maxInd = 5; }
+    if (m7 === "stop") {
+      if (LND) giu("Forte induttore sospeso o ridotto, fenotipo lento o non determinato: da 5 a 2,5 mg, o sospendere se è a 2,5 mg" + F4 + T);
+      else if (dose !== null && dose >= 5) giu("Forte induttore sospeso o ridotto: un livello di dose in meno quando è a 5 mg o più" + F4 + T);
+      else o.righe.push("Forte induttore sospeso o ridotto: a 2,5 mg la dose non cambia" + F4 + T + ".");
+    }
+    if (pres(m8)) o.righe.push("Moderato o debole induttore del CYP2C19: " + (LND ? "nessun adeguamento; FEVS dopo 4 settimane" : "gradiente e FEVS dopo 4 settimane, dose secondo la clinica") + T + ".");
+    if (m8 === "stop") {
+      if (LND) o.righe.push("Moderato o debole induttore del CYP2C19 sospeso, fenotipo lento o non determinato: nessun adeguamento" + T + ".");
+      else if (dose !== null && dose >= 5) giu("Moderato o debole induttore del CYP2C19 sospeso: un livello di dose in meno quando è a 5 mg o più" + F4 + T);
+      else o.righe.push("Moderato o debole induttore del CYP2C19 sospeso: a 2,5 mg la dose non cambia" + T + ".");
+    }
+    if (pres(m9)) o.righe.push("Moderato o debole induttore del CYP3A4: " + (LND ? "gradiente e FEVS dopo 4 settimane" : "nessun adeguamento; FEVS dopo 4 settimane") + T + ".");
+    if (m9 === "stop") { if (LND) giu("Moderato o debole induttore del CYP3A4 sospeso o ridotto, fenotipo lento o non determinato: ridurre a 2,5 mg, o sospendere se è a 2,5 mg" + F4 + T); else o.righe.push("Moderato o debole induttore del CYP3A4 sospeso: nessun adeguamento" + T + "."); }
+    return o;
+  }
+
+  // nd: le situazioni che la scheda non ha studiato e per cui non da' una dose;
+  // ndDati: i dati che mancano per sapere se una dose esiste (il rene)
+  function nuovoMI() { return { stato:"", no:[], nd:[], ndDati:[], manca:[], ris:[], note:[], azione:"", dose:null, sosp:false, stop:false, prossimo:"", inter:null }; }
+  // Funzione renale ignota, ne' eGFR ne' Cockcroft-Gault: un campo mancante da'
+  // «—» con la ragione, perche' sotto 30 una dose non c'e' (decisione del
+  // medico, 09/10/2026, e contratto del brief).
+  function renManca(rn, nome) {
+    var m = rn.cl && rn.cl.manca && rn.cl.manca.length ? " (qui mancano: " + rn.cl.manca.join(", ") + ")" : "";
+    return "<b>Funzione renale —</b>: serve l'eGFR del laboratorio, o creatinina, età, peso e sesso per la Cockcroft-Gault" + m + ": sotto 30 la scheda non dà una dose" + st(nome, "4.2") + ".";
+  }
+
+  function mava(s, rn) {
+    var o = nuovoMI(), fase = s.mfase, dose = s.mdose, L = s.cyp === "lento" || s.cyp === "nd", max = L ? 5 : 15;
+    if (s.eta !== null && s.eta < SOGLIE.adulto) o.no.push("<b>Età sotto i 18 anni</b>: sicurezza ed efficacia non stabilite, e sotto i 12 anni non si usa" + st(CAM, "4.2") + "; le righe ESC sono per l'adulto" + pgs(R19) + ". → progetto Distillati-cardio-pediatria.");
+    if (s.sesso === "f") {
+      if (s.grav === "gr") o.no.push("<b>Gravidanza in corso o cercata</b>: controindicato" + st(CAM, "4.3") + "; va sospeso 6 mesi prima di cercare la gravidanza, mettendo in conto il ritorno dell'ostruzione" + st(CAM, "4.6") + ".");
+      else if (s.grav === "nocontr") o.no.push("<b>Età fertile senza contraccezione efficace</b>: controindicato" + st(CAM, "4.3") + ".");
+      else if (!s.grav) o.manca.push("serve sapere se è in età fertile, e con quale contraccezione (passo 3)");
+    }
+    if (s.diso === "in") o.no.push("<b>Disopiramide in corso</b>: la fonte non vuole gli inibitori della miosina con la disopiramide" + pgs(P53) + "; per la scheda la sicurezza dell'associazione non è stabilita, con monitoraggio" + st(CAM, "4.4") + ". Lettura prudente: la fonte.");
+    if (s.cp === "c") o.nd.push("<b>Child-Pugh C</b> (compromissione epatica severa): la scheda non dà una dose, perché il mavacamten non è stato studiato in questi pazienti" + st(CAM, "4.2, 5.2") + ".");
+    if (!fase) o.manca.push("serve il punto della terapia (passo 5)");
+    if (!s.cyp) o.manca.push("serve il fenotipo CYP2C19: si genotipizza prima di iniziare, e finché non è noto si segue lo schema del metabolizzatore lento" + st(CAM, "4.2"));
+    var it = mInter(s, fase, dose), i;
+    o.inter = it;
+    if (s.cc === "in" && !s.i_m4) o.note.push("Verapamil o diltiazem in corso (passo 2): sono inibitori moderati del CYP3A4. Segnalali fra i farmaci associati, «in terapia da prima» o «avviato o aumentato ora»: nel metabolizzatore lento o non determinato cambiano la dose" + st(CAM, "4.5") + ".");
+    for (i = 0; i < it.ctr.length; i++) o.no.push("<b>Interazione</b>: " + it.ctr[i] + ".");
+    var mr = mavaRene(rn);
+    if (mr === "sotto") o.nd.push(rn.dialisi ? "<b>Dialisi</b>: la scheda non la nomina; sta sotto i 30 mL/min/1,73 m² della compromissione renale severa, per cui non dà una dose perché il mavacamten non è stato studiato in questi pazienti" + st(CAM, "4.2, 5.2") + "."
+      : (rn.egfr !== null ? "<b>eGFR " + nf(rn.egfr, 0) + " mL/min/1,73 m²</b> (&lt;30, compromissione renale severa): la scheda non dà una dose, perché il mavacamten non è stato studiato in questi pazienti" + st(CAM, "4.2, 5.2") + "."
+      : "<b>eGFR non indicato, Cockcroft-Gault " + nf(rn.crcl) + " mL/min</b> (&lt;30): sotto 30 mL/min/1,73 m² la scheda non dà una dose, perché il mavacamten non è stato studiato in questi pazienti" + st(CAM, "4.2, 5.2") + ". Senza l'eGFR del laboratorio decide la Cockcroft-Gault sul peso reale; se l'eGFR del laboratorio è ≥30, decide quello."));
+    else if (mr === "manca") o.ndDati.push(renManca(rn, CAM));
+    else if (rn.egfr === null) o.note.push("eGFR non indicato, Cockcroft-Gault " + nf(rn.crcl) + " mL/min (≥30): nessun adeguamento" + st(CAM, "4.2") + ". La soglia della scheda è in eGFR: se quello del laboratorio è sotto 30, la scheda non dà una dose.");
+    else o.note.push("eGFR " + nf(rn.egfr, 0) + " mL/min/1,73 m² (≥30): nessun adeguamento" + st(CAM, "4.2") + (rn.crcl !== null && rn.crcl < SOGLIE.miEgfr ? ". La Cockcroft-Gault è " + nf(rn.crcl) + ", sotto 30: la scheda ragiona in eGFR, che decide qui; da pesare" : "") + ".");
+    var agM = avvisoAgg(rn, "mavacamten"); if (agM) o.note.push(agM);
+    if (o.no.length) { o.stato = "no"; return o; }
+    if (o.nd.length || o.ndDati.length) { o.stato = "nd"; return o; }
+    if (o.manca.length) { o.stato = "manca"; return o; }
+    var fe = s.fe, g = s.gCtrl, prima = dose;
+    function sospendi() {
+      if (dose === 2.5 && s.m2volte) { o.stop = true; o.dose = 0; o.azione = "<b>Interrompere definitivamente</b>: la FEVS è sotto il 50% per la seconda volta alla dose di 2,5 mg" + st(CAM, "4.2 Fig. 4"); o.prossimo = "—"; return; }
+      o.sosp = true; o.dose = 0;
+      o.azione = "<b>Sospendere</b>: FEVS " + nf(fe, 0) + "%, sotto il 50%, che vale a ogni visita" + st(CAM, "4.2 Fig. 1–4");
+      o.prossimo = "eco ogni 4 settimane finché la FEVS torna ≥50%; poi si riprende a " + md(dose === null ? 2.5 : (mGiu(dose) || 2.5)) + " (il livello inferiore; da 2,5 mg si riprende a 2,5), si ricontrolla dopo 4 settimane e si tiene la dose 8 settimane" + st(CAM, "4.2 Fig. 4");
+    }
+    if (fase === "avvio") {
+      if (fe === null) { o.stato = "manca"; o.manca.push("serve la FEVS (passo 1): sotto il 55% non si inizia"); return o; }
+      if (fe < SOGLIE.feAvvio) { o.stato = "no"; o.no.push("<b>FEVS " + nf(fe, 0) + "%</b>: sotto il 55% il trattamento non si inizia" + st(CAM, "4.2") + "."); return o; }
+      var start = L ? 2.5 : 5, perche = L ? (s.cyp === "nd" ? "fenotipo non ancora determinato: lo schema del lento" : "metabolizzatore lento") : "metabolizzatore intermedio, normale, rapido o ultrarapido";
+      if (s.cp === "ab") { start = 2.5; perche += "; con Child-Pugh A–B si parte da 2,5 mg con ogni fenotipo"; }
+      if (it.avvio25) { start = 2.5; perche += "; con un forte inibitore del CYP2C19 si parte da 2,5 mg"; }
+      o.stato = "ok"; o.dose = start;
+      o.azione = "<b>Iniziare " + md(start) + " una volta al giorno</b> (" + perche + "); dose massima " + md(max) + st(CAM, "4.2") + ". La fonte rimanda alla scheda per la titolazione, fino a 15 mg con l'eco" + pgs(P53) + ".";
+      o.prossimo = "settimana 4: gradiente con Valsalva e FEVS; poi settimana 8 e settimana 12" + st(CAM, "4.2 Fig. " + (L ? "1" : "2"));
+      if (s.nyha === "4") o.ris.push("<b>NYHA IV</b>: fuori dall'indicazione della scheda, che è la CMIO sintomatica in classe II–III dell'adulto" + st(CAM, "4.1") + ".");
+      if (s.nyha === "1" && !s.sinc) o.ris.push("<b>Senza sintomi</b>: la scheda lo indica nella CMIO sintomatica" + st(CAM, "4.1") + ", e la Rec. Table 19 per migliorare i sintomi" + pgs(R19) + ".");
+      if (s.sesso === "f" && s.grav === "contr") o.note.push("Test di gravidanza negativo prima di iniziare; contraccezione efficace durante e fino a 6 mesi dopo l'ultima dose; non allattare" + st(CAM, "4.2, 4.6") + ".");
+    } else {
+      if (dose === null) { o.stato = "manca"; o.manca.push("serve la dose (passo 5)"); return o; }
+      if (L && dose > 5) o.ris.push("Dose di " + md(dose) + " con il fenotipo " + (s.cyp === "nd" ? "non ancora determinato" : "lento") + ": il massimo dello schema è 5 mg" + st(CAM, "4.2") + ".");
+      if (fe === null) { o.stato = "manca"; o.manca.push("serve la FEVS dell'eco di controllo (passo 1)"); return o; }
+      if (fase === "sosp") {
+        if (dose === 2.5 && s.m2volte) { o.stop = true; o.dose = 0; o.azione = "<b>Interrompere definitivamente</b>: la FEVS è scesa sotto il 50% due volte alla dose di 2,5 mg" + st(CAM, "4.2 Fig. 4"); o.prossimo = "—"; }
+        else if (fe < SOGLIE.feSosp) { o.sosp = true; o.dose = 0; o.azione = "<b>Resta sospeso</b>: FEVS " + nf(fe, 0) + "%, ancora sotto il 50%" + st(CAM, "4.2 Fig. 4"); o.prossimo = "eco ogni 4 settimane finché la FEVS torna ≥50%"; }
+        else { o.dose = mGiu(dose) || 2.5; o.azione = "<b>Riprendere a " + md(o.dose) + "</b>: FEVS " + nf(fe, 0) + "%, di nuovo ≥50%; si riprende al livello inferiore a quello della sospensione (" + md(dose) + ")" + (dose === 2.5 ? ", e da 2,5 mg si riprende a 2,5" : "") + st(CAM, "4.2 Fig. 4"); o.prossimo = "dopo 4 settimane clinica, gradiente con Valsalva e FEVS; poi dose invariata per 8 settimane salvo FEVS &lt;50%, e la fase di mantenimento" + st(CAM, "4.2 Fig. 4"); }
+      } else if (fe < SOGLIE.feSosp && !((fase === "s8" || fase === "mant") && s.msospG)) {
+        sospendi();
+      } else if ((fase === "s8" || fase === "mant") && s.msospG) {
+        if (fase === "s8") {
+          if (fe < SOGLIE.feSosp) { o.sosp = true; o.dose = 0; o.azione = "<b>Resta sospeso</b>: FEVS " + nf(fe, 0) + "%, sotto il 50%" + st(CAM, "4.2 Fig. 1, 4"); o.prossimo = "eco ogni 4 settimane finché la FEVS torna ≥50%"; }
+          else if (g === null) { o.stato = "manca"; o.manca.push("serve il gradiente con Valsalva all'eco di controllo (passo 5)"); return o; }
+          else if (g >= SOGLIE.gGiu) { o.dose = 2.5; o.azione = "<b>Riprendere 2,5 mg</b>: gradiente con Valsalva " + g + " mmHg, ≥20" + st(CAM, "4.2 Fig. 1"); o.prossimo = "settimana 12: la fase di mantenimento" + st(CAM, "4.2 Fig. 1, 3"); }
+          else { o.sosp = true; o.dose = 0; o.azione = "<b>Resta sospeso</b>: gradiente con Valsalva " + g + " mmHg, ancora sotto 20" + st(CAM, "4.2 Fig. 1"); o.prossimo = "settimana 12: si riprende 2,5 mg se la FEVS è ≥50%" + st(CAM, "4.2 Fig. 1–2"); }
+        } else {
+          if (fe < SOGLIE.feSosp) { o.sosp = true; o.dose = 0; o.azione = "<b>Resta sospeso</b>: FEVS " + nf(fe, 0) + "%, sotto il 50%" + st(CAM, "4.2 Fig. 1–2, 4"); o.prossimo = "eco ogni 4 settimane finché la FEVS torna ≥50%"; }
+          else { o.dose = 2.5; o.azione = "<b>Riprendere 2,5 mg</b> alla settimana 12: FEVS " + nf(fe, 0) + "%, ≥50%" + st(CAM, "4.2 Fig. 1–2"); o.prossimo = "dopo 4 settimane clinica, gradiente con Valsalva e FEVS; poi dose invariata per 8 settimane salvo FEVS &lt;50%" + st(CAM, "4.2 Fig. 1–2"); }
+        }
+      } else if (fase === "s4" || fase === "s8") {
+        if (g === null) { o.stato = "manca"; o.manca.push("serve il gradiente con Valsalva all'eco di controllo (passo 5)"); return o; }
+        if (g < SOGLIE.gGiu) {
+          var nd = mGiu(dose);
+          if (nd === 0) { o.sosp = true; o.dose = 0; o.azione = "<b>Sospendere</b>: gradiente con Valsalva " + g + " mmHg, sotto 20, alla dose di 2,5 mg" + st(CAM, "4.2 Fig. " + (L ? "1" : "2")); o.prossimo = fase === "s4" ? "settimana 8: con gradiente ≥20 si riprende 2,5 mg" + st(CAM, "4.2 Fig. 1") : "settimana 12: si riprende 2,5 mg se la FEVS è ≥50%" + st(CAM, "4.2 Fig. 1–2"); }
+          else { o.dose = nd; o.azione = "<b>Ridurre a " + md(nd) + "</b>: gradiente con Valsalva " + g + " mmHg, sotto 20" + st(CAM, "4.2 Fig. 2"); o.prossimo = fase === "s4" ? "settimana 8" : "settimana 12: la fase di mantenimento (Fig. 3)"; }
+        } else { o.dose = dose; o.azione = "<b>Mantenere " + md(dose) + "</b>: gradiente con Valsalva " + g + " mmHg, ≥20" + st(CAM, "4.2 Fig. " + (L ? "1" : "2")); o.prossimo = fase === "s4" ? "settimana 8" : "settimana 12: la fase di mantenimento (Fig. 3)"; }
+        o.note.push("Nelle prime 12 settimane la dose non sale mai: si sale solo nel mantenimento" + st(CAM, "4.2 Fig. 1–2") + ".");
+      } else if (fase === "dopo") {
+        o.dose = dose; o.azione = "<b>Mantenere " + md(dose) + "</b>: dopo un aumento o una ripresa la dose resta invariata per 8 settimane, salvo FEVS &lt;50%" + st(CAM, "4.2 Fig. 3–4");
+        o.prossimo = L && dose === 5 ? "fra 4 settimane (8 settimane dall'aumento a 5 mg, nel metabolizzatore lento)" + st(CAM, "4.2 Fig. 3") : "fra 8 settimane, poi la fase di mantenimento (Fig. 3)" + st(CAM, "4.2 Fig. 3");
+      } else if (fase === "mant") {
+        if (fe < SOGLIE.feAvvio) { o.dose = dose; o.azione = "<b>Mantenere " + md(dose) + "</b>: FEVS " + nf(fe, 0) + "%, fra 50 e 55, qualunque sia il gradiente" + st(CAM, "4.2 Fig. 3"); o.prossimo = "fra 3 mesi" + st(CAM, "4.2 Fig. 3"); }
+        else if (g === null) { o.stato = "manca"; o.manca.push("serve il gradiente con Valsalva all'eco di controllo (passo 5)"); return o; }
+        else if (g < SOGLIE.gSu) { o.dose = dose; o.azione = "<b>Mantenere " + md(dose) + "</b>: FEVS ≥55% e gradiente con Valsalva " + g + " mmHg, sotto 30" + st(CAM, "4.2 Fig. 3"); o.prossimo = "ogni 6 mesi clinica, gradiente e FEVS; nel primo ciclo di 6 mesi, una valutazione clinica a circa 3 mesi" + st(CAM, "4.2 Fig. 3"); }
+        else {
+          var tetto = it.maxInd !== null ? Math.min(max, it.maxInd) : max, su = mSu(dose, tetto);
+          if (su === null) { o.dose = dose; o.azione = dose > tetto ? "<b>Non aumentare</b>: " + md(dose) + " è già oltre la dose massima dello schema (" + md(tetto) + (L ? ", metabolizzatore lento o non determinato" : "") + "), qui sotto" + st(CAM, "4.2 Fig. 3") : "<b>Mantenere " + md(dose) + "</b>: è la dose massima (" + md(tetto) + (L ? ", metabolizzatore lento o non determinato" : "") + ")" + st(CAM, "4.2 Fig. 3"); o.prossimo = "ogni 6 mesi; senza beneficio dopo 4–6 mesi alla dose massima tollerata se ne considera l'interruzione" + st(CAM, "4.2") + ", e il passo successivo della scala è la riduzione settale (passo 7)"; }
+          else if (s.interc || s.fa === "nuova") { o.dose = dose; o.azione = "<b>Non aumentare</b>: FEVS ≥55% e gradiente " + g + " mmHg chiederebbero " + md(su) + ", ma con una malattia intercorrente o un'aritmia non controllata la dose non sale finché non si risolve" + st(CAM, "4.2, 4.4"); o.prossimo = "rivalutare la FEVS; riprendere la titolazione quando il quadro è risolto"; }
+          else if (it.noAum) { o.dose = dose; o.azione = "<b>Non aumentare</b>: l'interazione qui sotto chiede di ridurre"; o.prossimo = "FEVS dopo 4 settimane"; }
+          else if (!s.maum) { o.stato = "manca"; o.manca.push("serve sapere quando è stato l'ultimo aumento: un altro è ammesso dopo 3 mesi alla dose in corso (passo 5)"); return o; }
+          else if (s.maum === "meno3") { o.dose = dose; o.azione = "<b>Mantenere " + md(dose) + "</b>: un altro aumento è ammesso dopo 3 mesi alla dose in corso, con FEVS ≥55%" + st(CAM, "4.2 Fig. 3"); o.prossimo = "a 3 mesi dall'ultimo aumento"; }
+          else { o.dose = su; o.azione = "<b>Aumentare a " + md(su) + "</b>: FEVS ≥55% e gradiente con Valsalva " + g + " mmHg, ≥30; un livello in più" + st(CAM, "4.2 Fig. 3"); o.prossimo = L ? "4 e 8 settimane dopo l'aumento" + st(CAM, "4.2 Fig. 3") : "4 settimane dopo l'aumento clinica, gradiente e FEVS; poi dose invariata per 8 settimane salvo FEVS &lt;50%" + st(CAM, "4.2 Fig. 3"); }
+        }
+      }
+    }
+    // le interazioni che chiedono di scendere valgono sulla dose in corso
+    if (fase !== "avvio" && fase !== "sosp" && !o.stop && it.azioni.length) {
+      var fin = o.dose, sosp4 = false, j;
+      for (j = 0; j < it.azioni.length; j++) if (it.azioni[j].dose !== null && it.azioni[j].dose < fin) { fin = it.azioni[j].dose; sosp4 = it.azioni[j].sosp4; }
+      if (fin < o.dose || (fin === 0 && !o.sosp)) {
+        o.dose = fin; o.sosp = fin === 0;
+        o.azione += "<br>→ <b>Per l'interazione: " + (fin === 0 ? "sospendere" + (sosp4 ? " per 4 settimane" : "") : "scendere a " + md(fin)) + "</b> (sotto)";
+        o.prossimo = "FEVS dopo 4 settimane, poi di nuovo la titolazione" + st(CAM, "4.5");
+      }
+    }
+    if (prima !== null && fase !== "avvio") o.prima = prima;
+    o.stato = o.stop ? "stop" : (o.sosp ? "sosp" : "ok");
+    return o;
+  }
+
+  /* ═══ AFICAMTEN: Myqorzo 4.2 (Tab. 1–2), 4.3, 4.5 (Tab. 3), 4.6 (pura) ══
+     Inizio 5 mg; 10 mg da considerare con gradiente >=100 mmHg; avvio o
+     aumento non raccomandati con FEVS <55%. Eco 2-8 settimane dopo l'inizio,
+     ogni cambio e ogni interruzione. FEVS >=55 e gradiente con Valsalva >=30:
+     +5 mg fino a 20; >=55 e <30: mantenere; 50-<55: mantenere; 40-<50: -5 mg,
+     a 5 mg stop 7 giorni e ripresa a 5 con FEVS >=55; <40: stop >=7 giorni,
+     ripresa 5 mg sotto con FEVS >=55. Mantenimento: ogni 6 mesi, ogni 3 con
+     FEVS 50-<55. Nessuna genotipizzazione. Child-Pugh A-B: nessun
+     aggiustamento. Rene sotto 30 (eGFR o Cockcroft-Gault) o dialisi,
+     Child-Pugh C: nessuna dose, come per il mavacamten (decisione del medico,
+     09/10/2026). */
+  function aInter(s, fase, dose) {
+    var o = { ctr:[], azioni:[], righe:[], evita:[], noAum:false, max:20, avvio5:false };
+    var a1 = s.i_a1, a2 = s.i_a2, a3 = s.i_a3, a4 = s.i_a4, a5 = s.i_a5, a6 = s.i_a6, avvio = fase === "avvio";
+    var T = st(MYQ, "4.2 Tab. 2, 4.5 Tab. 3");
+    if (pres(a2)) o.ctr.push("moderato inibitore del CYP2C9 che inibisce anche CYP2D6 o CYP3A — fluconazolo oltre una dose singola, adagrasib —: controindicato" + st(MYQ, "4.3") + "; il fluconazolo 150 mg in dose singola non chiede aggiustamenti" + st(MYQ, "4.5"));
+    if (pres(a5)) o.ctr.push("forte induttore del CYP3A4 e moderato del CYP2C9 — rifampicina, iperico —: controindicato" + st(MYQ, "4.3"));
+    if (pres(a1)) { o.avvio5 = true; o.max = 5; o.noAum = true; o.righe.push("Forte inibitore del CYP2C9: l'associazione va evitata; se non si può, aficamten 5 mg, con FEVS e gradiente ogni 4–8 settimane fino a una nuova dose di mantenimento" + T + "."); if (!avvio && dose !== null && dose > 5) o.azioni.push({ dose:5, t:"Forte inibitore del CYP2C9: aficamten 5 mg" + T }); }
+    if (pres(a3)) {
+      o.max = Math.min(o.max, 15);
+      if (avvio || a3 === "gia") { o.avvio5 = true; o.righe.push("Debole inibitore del CYP2C9 che inibisce anche CYP2D6 o CYP3A, già in terapia: si inizia a 5 mg, e il mantenimento non supera 15 mg" + T + "."); }
+      else if (dose === 20 || dose === 15) { o.azioni.push({ dose:5, t:"Debole inibitore del CYP2C9 che inibisce anche CYP2D6 o CYP3A, avviato: da " + dose + " a 5 mg; poi non oltre 15 mg, con FEVS e gradiente ogni 4–8 settimane" + T }); o.noAum = true; }
+      else if (dose !== null) { o.evita.push("Debole inibitore del CYP2C9 che inibisce anche CYP2D6 o CYP3A, avviato con aficamten a " + dose + " mg: <b>l'associazione va evitata</b> alle dosi di 5 e 10 mg" + T + "."); o.noAum = true; }
+    }
+    if (a3 === "stop") o.righe.push("Debole inibitore del CYP2C9 sospeso: nessun aggiustamento; FEVS, gradiente e titolazione con la Tab. 1" + T + ".");
+    if (a4) o.righe.push("Amiodarone: FEVS e gradiente ogni 4–8 settimane all'inizio e alla sospensione, perché l'interazione può durare mesi; negli studi quasi tutti erano in mantenimento a 5–10 mg" + T + ".");
+    if (pres(a6)) { if (avvio || a6 === "gia") { o.avvio5 = true; o.righe.push("Induttore moderato o forte del CYP3A4 o del CYP2C9 già in terapia: si inizia a 5 mg" + T + "."); } else o.righe.push("Induttore moderato o forte del CYP3A4 o del CYP2C9 avviato in corso: nessun aggiustamento, la dose sale fino a 20 mg con la Tab. 1" + T + "."); }
+    if (a6 === "stop") {
+      if (dose !== null && dose > 5) { o.azioni.push({ dose:dose === 20 ? 10 : 5, t:"Induttore sospeso: da 20 a 10 mg, da 15 a 5, da 10 a 5; poi FEVS, gradiente e la Tab. 1" + T }); o.noAum = true; }
+      else o.righe.push("Induttore sospeso: a 5 mg la dose non cambia; FEVS, gradiente e la Tab. 1" + T + ".");
+    }
+    return o;
+  }
+
+  function afi(s, rn, os) {
+    var o = nuovoMI(), fase = s.afase, dose = s.adose, i;
+    if (s.eta !== null && s.eta < SOGLIE.adulto) o.no.push("<b>Età sotto i 18 anni</b>: sicurezza ed efficacia non stabilite, nessun dato" + st(MYQ, "4.2") + ". → progetto Distillati-cardio-pediatria.");
+    if (s.diso === "in") o.no.push("<b>Disopiramide in corso</b>: la fonte non vuole gli inibitori della miosina con la disopiramide — la frase parla della classe" + pgs(P53) + "; la scheda la tratta come un inotropo negativo da sorvegliare, non come una controindicazione" + st(MYQ, "4.5") + ". Lettura prudente: la fonte.");
+    if (s.cp === "c") o.nd.push("<b>Child-Pugh C</b> (compromissione epatica grave): la scheda non dà una dose, perché l'aficamten non è stato studiato in questi pazienti" + st(MYQ, "4.2") + "; gli effetti non sono noti" + st(MYQ, "5.2") + ".");
+    else if (s.cp === "ab") o.note.push("Child-Pugh A–B: nessun aggiustamento della dose né dello schema di titolazione" + st(MYQ, "4.2") + "; con la compromissione moderata l'esposizione non è cambiata" + st(MYQ, "5.2") + ".");
+    if (s.sesso === "f") {
+      if (s.grav === "gr") o.ris.push("<b>Gravidanza</b>: non è una controindicazione, ma non si usa salvo che le condizioni della donna lo richiedano; se si usa, eco fetale regolare (per esempio ogni 2 settimane), e dose ridotta o sospesa se compare disfunzione cardiaca fetale" + st(MYQ, "4.6") + ".");
+      else if (s.grav === "nocontr") o.ris.push("<b>Età fertile senza contraccezione efficace</b>: la scheda chiede una contraccezione efficace durante il trattamento" + st(MYQ, "4.6") + ".");
+      else if (s.grav === "contr") o.note.push("Contraccezione efficace durante il trattamento; nessun test di gravidanza richiesto dalla scheda" + st(MYQ, "4.6") + ".");
+      else if (!s.grav) o.manca.push("serve sapere se è in età fertile, e con quale contraccezione (passo 3)");
+    }
+    if (!fase) o.manca.push("serve il punto della terapia (passo 5)");
+    var it = aInter(s, fase, dose);
+    o.inter = it;
+    for (i = 0; i < it.ctr.length; i++) o.no.push("<b>Interazione</b>: " + it.ctr[i] + ".");
+    var ar = afiRene(rn), arChi = [];
+    if (ar.eg) arChi.push("eGFR " + nf(rn.egfr, 0) + " mL/min/1,73 m²");
+    if (ar.cl) arChi.push("Cockcroft-Gault " + nf(rn.crcl) + " mL/min");
+    if (ar.esito === "sotto") o.nd.push((ar.dialisi ? "<b>Dialisi</b>: la scheda non la nomina; sta sotto i 30 mL/min della compromissione renale grave, per cui non dà una dose perché l'aficamten non è stato studiato in questi pazienti" : "<b>" + arChi.join(" e ") + "</b> (&lt;30, compromissione renale grave): la scheda non dà una dose, perché l'aficamten non è stato studiato in questi pazienti") + st(MYQ, "4.2") + "; gli effetti sotto 30 non sono noti" + st(MYQ, "5.2") + (ar.dialisi ? "" : ". La scheda scrive «mL/min» senza normalizzare: lo strumento guarda l'eGFR e la Cockcroft-Gault sul peso reale, e basta una delle due sotto 30") + ".");
+    else if (ar.esito === "manca") o.ndDati.push(renManca(rn, MYQ));
+    else o.note.push("Funzione renale ≥30 mL/min: nessun aggiustamento; la clearance renale è meno dello 0,1% della totale" + st(MYQ, "4.2, 5.2") + ".");
+    var ag = avvisoAgg(rn, "aficamten"); if (ag) o.note.push(ag);
+    if (o.no.length) { o.stato = "no"; return o; }
+    if (o.nd.length || o.ndDati.length) { o.stato = "nd"; return o; }
+    if (o.manca.length) { o.stato = "manca"; return o; }
+    var fe = s.fe, g = s.gCtrl, gmax = Math.max(g === null ? -1 : g, os.letto === null ? -1 : os.letto), prima = dose;
+    if (fase === "avvio") {
+      if (fe === null) { o.stato = "manca"; o.manca.push("serve la FEVS (passo 1): con FEVS sotto il 55% l'avvio non è raccomandato"); return o; }
+      if (fe < SOGLIE.feAvvio) { o.stato = "no"; o.no.push("<b>FEVS " + nf(fe, 0) + "%</b>: con FEVS sotto il 55% l'avvio non è raccomandato" + st(MYQ, "4.2") + "."); return o; }
+      o.dose = 5;
+      o.azione = "<b>Iniziare 5 mg una volta al giorno</b>" + st(MYQ, "4.2") + "; si sale di 5 mg ogni 2–8 settimane fino al mantenimento o al massimo di " + it.max + " mg. Nessuna genotipizzazione" + st(MYQ, "4.2, 5.2") + ".";
+      if (gmax >= SOGLIE.afi100) o.azione += it.avvio5 ? " Il gradiente è ≥100 mmHg, ma con il farmaco associato qui sotto si inizia a 5 mg." : " Gradiente " + gmax + " mmHg, ≥100: <b>da considerare 10 mg</b> come dose iniziale" + st(MYQ, "4.2") + ".";
+      o.prossimo = "eco 2–8 settimane dopo l'inizio: FEVS e gradiente con Valsalva" + st(MYQ, "4.2");
+      if (s.nyha === "4") o.ris.push("<b>NYHA IV</b>: fuori dall'indicazione della scheda, che è la CMIO sintomatica in classe II–III dell'adulto" + st(MYQ, "4.1") + ".");
+      if (s.nyha === "1" && !s.sinc) o.ris.push("<b>Senza sintomi</b>: la scheda lo indica nella CMIO sintomatica" + st(MYQ, "4.1") + ".");
+    } else {
+      if (dose === null) { o.stato = "manca"; o.manca.push("serve la dose (passo 5)"); return o; }
+      if (fe === null) { o.stato = "manca"; o.manca.push("serve la FEVS dell'eco di controllo (passo 1)"); return o; }
+      var giu5 = Math.max(5, dose - 5);
+      if (fase === "int") {
+        if (fe >= SOGLIE.feAvvio) { o.dose = giu5; o.azione = "<b>Riprendere a " + giu5 + " mg</b>: FEVS " + nf(fe, 0) + "%, di nuovo ≥55%; si riprende 5 mg sotto la dose dell'interruzione, o a 5 mg se era 5" + st(MYQ, "4.2"); o.prossimo = "eco 2–8 settimane dopo la ripresa" + st(MYQ, "4.2"); }
+        else { o.sosp = true; o.dose = 0; o.azione = "<b>Resta interrotto</b>: FEVS " + nf(fe, 0) + "%; si riprende solo con FEVS ≥55%, dopo almeno 7 giorni" + st(MYQ, "4.2"); o.prossimo = "nuovo eco: la scheda non fissa l'intervallo"; }
+      } else if (fe < SOGLIE.feAfi40) {
+        o.sosp = true; o.dose = 0; o.azione = "<b>Interrompere per almeno 7 giorni</b>: FEVS " + nf(fe, 0) + "%, sotto il 40%" + st(MYQ, "4.2 Tab. 1"); o.prossimo = "si riprende a " + giu5 + " mg quando la FEVS è ≥55%; eco 2–8 settimane dopo la ripresa" + st(MYQ, "4.2");
+      } else if (fe < SOGLIE.feSosp) {
+        if (dose === 5) { o.sosp = true; o.dose = 0; o.azione = "<b>Interrompere per 7 giorni</b>: FEVS " + nf(fe, 0) + "%, fra 40 e 50, alla dose di 5 mg" + st(MYQ, "4.2 Tab. 1"); o.prossimo = "si riprende a 5 mg quando la FEVS è ≥55%" + st(MYQ, "4.2"); }
+        else { o.dose = dose - 5; o.azione = "<b>Ridurre a " + (dose - 5) + " mg</b>: FEVS " + nf(fe, 0) + "%, fra 40 e 50" + st(MYQ, "4.2 Tab. 1"); o.prossimo = "eco 2–8 settimane dopo il cambio" + st(MYQ, "4.2"); }
+      } else if (fe < SOGLIE.feAvvio) {
+        o.dose = dose; o.azione = "<b>Mantenere " + dose + " mg</b>: FEVS " + nf(fe, 0) + "%, fra 50 e 55, qualunque sia il gradiente; con FEVS sotto il 55% non si sale" + st(MYQ, "4.2 Tab. 1"); o.prossimo = "ogni 3 mesi" + st(MYQ, "4.2");
+      } else if (g === null) { o.stato = "manca"; o.manca.push("serve il gradiente con Valsalva all'eco di controllo (passo 5)"); return o; }
+      else if (g < SOGLIE.gSu) { o.dose = dose; o.azione = "<b>Mantenere " + dose + " mg</b>: FEVS ≥55% e gradiente con Valsalva " + g + " mmHg, sotto 30" + st(MYQ, "4.2 Tab. 1"); o.prossimo = "ogni 6 mesi, una volta stabilita la dose di mantenimento" + st(MYQ, "4.2"); }
+      else if (dose + 5 > it.max) { o.dose = dose; o.azione = dose > it.max ? "<b>Non aumentare</b>: con il farmaco associato la dose massima è " + it.max + " mg" + st(MYQ, "4.2") : "<b>Mantenere " + dose + " mg</b>: è la dose massima" + (it.max < 20 ? " con il farmaco associato (" + it.max + " mg)" : " (20 mg)") + st(MYQ, "4.2"); o.prossimo = "ogni 6 mesi; il passo successivo della scala è la riduzione settale (passo 7)"; }
+      else if (s.interc || s.fa === "nuova") { o.dose = dose; o.azione = "<b>Non aumentare</b>: FEVS ≥55% e gradiente " + g + " mmHg chiederebbero " + (dose + 5) + " mg, ma con una malattia intercorrente o un'aritmia nuova o non controllata la dose non sale finché non è risolta" + st(MYQ, "4.2, 4.4"); o.prossimo = "FEVS e gradiente, e la Tab. 1, quando il quadro è stabile"; }
+      else if (it.noAum) { o.dose = dose; o.azione = "<b>Non aumentare</b>: il farmaco associato qui sotto lo impedisce"; o.prossimo = "FEVS e gradiente ogni 4–8 settimane" + st(MYQ, "4.5"); }
+      else { o.dose = dose + 5; o.azione = "<b>Aumentare a " + (dose + 5) + " mg</b>: FEVS ≥55% e gradiente con Valsalva " + g + " mmHg, ≥30" + st(MYQ, "4.2 Tab. 1"); o.prossimo = "eco 2–8 settimane dopo il cambio" + st(MYQ, "4.2"); }
+      // anche alla ripresa dopo un'interruzione: con il farmaco associato
+      // valgono la sua dose e il suo tetto (Myqorzo 4.2 e Tab. 2)
+      if (!o.sosp) {
+        var fin = o.dose, j;
+        for (j = 0; j < it.azioni.length; j++) if (it.azioni[j].dose < fin) fin = it.azioni[j].dose;
+        if (fin > it.max) fin = it.max;
+        if (fin < o.dose) { o.dose = fin; o.azione += "<br>→ <b>Per il farmaco associato: " + fin + " mg</b> (sotto)"; o.prossimo = "FEVS e gradiente ogni 4–8 settimane" + st(MYQ, "4.5"); }
+      }
+    }
+    if (prima !== null && fase !== "avvio") o.prima = prima;
+    o.stato = o.sosp ? "sosp" : "ok";
+    return o;
+  }
+
+  // Esmololo (Brevibloc 4.2): carico 500 µg/kg/min per 1 minuto = 0,5 mg/kg;
+  // mantenimento 50-200 µg/kg/min = 3-12 mg/kg/h. Peso reale; nessun tetto
+  // assoluto nella scheda, oltre 200 µg/kg/min poco effetto in piu'.
+  function esmololo(peso) { if (peso === null || peso < 25 || peso > 250) return null; return { carico:0.5 * peso, m50:3 * peso, m200:12 * peso }; }
+
+  /* ═══ STATO ══════════════════════════════════════════════════════════ */
+  function el(id) { return document.getElementById(id); }
+  function ckv(id) { var e = el(id); return !!(e && e.checked); }
+  function num(id) { var v = el(id).value; if (v === "") return null; var n = parseFloat(String(v).replace(",", ".")); return isNaN(n) ? null : n; }
+  function radio(n) { var e = document.querySelector('input[name="' + n + '"]:checked'); return e ? e.value : ""; }
+  function sel(id) { var e = el(id); return e ? e.value : ""; }
+
+  function S() {
+    var ids = ["sinc", "glauc", "prost", "qtfarm", "dialisi", "interc", "ipo", "imsam", "ladil", "lesioni", "ctrSrt", "icd", "msospG", "m2volte"], s = {}, i;
+    for (i = 0; i < ids.length; i++) s[ids[i]] = ckv(ids[i]);
+    var nn = ["gRip", "gVal", "gSf", "fe", "qtc", "eta", "peso", "alt", "creat", "egfr", "setto", "gCtrl"];
+    for (i = 0; i < nn.length; i++) s[nn[i]] = num(nn[i]);
+    s.feFuori = s.fe !== null && (s.fe < 5 || s.fe > 90); if (s.feFuori) s.fe = null;
+    s.qtcFuori = s.qtc !== null && (s.qtc < 300 || s.qtc > 700); if (s.qtcFuori) s.qtc = null;
+    s.gCtrlFuori = s.gCtrl !== null && !gOk(s.gCtrl); if (s.gCtrlFuori) s.gCtrl = null;
+    var rr = ["nyha", "bb", "cc", "diso", "mi", "fa", "sesso", "grav", "ucr", "cp", "mol", "cyp", "maum"];
+    for (i = 0; i < rr.length; i++) s[rr[i]] = radio(rr[i]);
+    s.ucr = s.ucr || "mg";
+    s.mdose = radio("mdose") ? parseFloat(radio("mdose")) : null;
+    s.adose = radio("adose") ? parseFloat(radio("adose")) : null;
+    s.mfase = s.mol === "mava" ? sel("mfase") : "";
+    s.afase = s.mol === "afi" ? sel("afase") : "";
+    for (i = 1; i <= 9; i++) s["i_m" + i] = s.mol === "mava" ? sel("i_m" + i) : "";
+    for (i = 1; i <= 6; i++) s["i_a" + i] = s.mol === "afi" ? sel("i_a" + i) : "";
+    // cio' che sta in una riga nascosta non conta
+    if (s.sesso !== "f") s.grav = "";
+    if (s.mfase !== "s8" && s.mfase !== "mant") s.msospG = false;
+    if (s.mfase !== "mant" || s.msospG) s.maum = "";
+    if (s.mfase === "avvio" || s.mol !== "mava") s.mdose = null;
+    if (s.afase === "avvio" || s.mol !== "afi") s.adose = null;
+    if (s.mdose !== 2.5 || s.mfase === "avvio") s.m2volte = false;
+    if (s.mol !== "mava") s.cyp = "";
+    return s;
+  }
+
+  /* ═══ DISEGNO ════════════════════════════════════════════════════════ */
+  function nota(g, t) { return '<div class="nota ' + (g || "") + '">' + t + "</div>"; }
+  function chip(k, t) { return '<span class="cat ' + k + '">' + t + "</span>"; }
+  function passo(t, att, no) { return '<div class="passo' + (att ? " att" : "") + (no ? " no" : "") + '"><span class="ico">' + (no ? "×" : (att ? "→" : "·")) + '</span><span class="tx">' + t + "</span></div>"; }
+  function riga(n, d) { return '<div class="sint"><span class="n">' + n + '</span><span class="d">' + d + "</span></div>"; }
+  function clc(rn) { return rn.crcl !== null ? "ClCr " + nf(rn.crcl) + " mL/min: " : ""; }
+  var KIDS = "<b>Età pediatrica</b>: la fonte non dà dosi per il bambino e le schede tecniche lette sono dell'adulto: lo strumento non le mostra. → progetto Distillati-cardio-pediatria.";
+
+  function htmlOstr(s, os) {
+    var h = "", k;
+    if (os.via === "manca") {
+      h += '<div class="esito">' + chip("kx", "gradiente —") + '<span class="muted">' + os.manca[0] + "</span></div>";
+      if (os.fuori.length && os.max !== null) h += nota("", "Fuori scala (0–250 mmHg): " + os.fuori.join(", ") + ".");
+      return h;
+    }
+    var c = catGrad(os.max);
+    k = c === "50" ? ["k4", "LVOTO ≥50 mmHg: la scala della Fig. 14"] : (c === "30" ? ["k2", "LVOTO 30–49 mmHg: sotto la soglia del trattamento"] : ["k0", "sotto 30 mmHg: nessun LVOTO"]);
+    h += '<div class="esito"><span class="big">Gradiente massimo ' + os.max + " mmHg</span>" + chip(k[0], k[1]) + "</div>";
+    h += '<div class="muted" style="font-size:12.5px;margin-bottom:4px">' + (os.rip !== null ? "riposo " + os.rip : "riposo —") + " · al letto " + (os.val !== null ? os.val : "—") + " · da sforzo " + (os.sf !== null ? os.sf : "—") + " mmHg. LVOTO per convenzione ≥30 mmHg; il trattamento invasivo si considera da ≥50" + pgs(P53) + ".</div>";
+    if (os.fuori.length) h += nota("", "Gradiente " + os.fuori.join(" e ") + " fuori scala (0–250 mmHg): non conta.");
+    h += passo("Eco 2D e Doppler a riposo e con Valsalva, seduto e semisupino, poi in piedi " + corPill("I", "B") + pgs(R16) + ". Niente dobutamina per provocare il gradiente: non è una prova fisiologica" + pgs("ESC 2023, p. 3549") + ".", false);
+    if (os.via === "f14") h += passo("Gradiente " + (os.da === "sforzo" ? "da sforzo" : "a riposo o con le manovre") + " ≥50 mmHg: si passa alla <b>gestione dell'ostruzione</b>, la scala della Fig. 14 (passo 2)" + pgs(F12) + ".", true);
+    else if (os.via === "anno") h += passo("Gradiente sotto 50 senza sintomi: <b>eco di nuovo a 1 anno</b>, che riparte dall'esame a riposo e con le manovre" + pgs(F12) + ". L'eco da sforzo si può considerare caso per caso, quando la presenza del gradiente cambia i consigli sullo stile di vita o la terapia — nota della figura, senza classe" + pgs(F12) + ".", true);
+    else if (os.via === "sforzo") h += passo("Sintomatico con gradiente sotto 50 alle manovre: <b>eco da sforzo</b> — in piedi, seduto se possibile, o semisupino — per scoprire il LVOTO provocabile e l'insufficienza mitralica da sforzo " + corPill("I", "B") + pgs(R16) + ". Scrivi il suo gradiente al passo 1.", true);
+    else if (os.via === "nonostr") {
+      h += passo("Sintomatico, e nemmeno da sforzo ≥50 mmHg: <b>terapia medica dei sintomi senza ostruzione</b>" + pgs(F12) + " — scompenso e dolore toracico nella sezione 10.7 del distillato (Rec. Table 22, p. 3557). Questo strumento si ferma qui.", true);
+      if (c === "30") h += nota("info", "Gradiente fra 30 e 50 mmHg: di regola si tratta come la forma non ostruttiva; la riduzione invasiva solo in pochissimi casi selezionati senza un'altra causa evidente dei sintomi, e i dati mancano" + pgs(P53) + ".");
+    }
+    if (os.via !== "f14" && os.val === null) h += nota("", "<b>Manca il gradiente con le manovre al letto.</b> La Fig. 12 parte da riposo, Valsalva e in piedi " + corPill("I", "B") + pgs(R16) + ", e l'eco da sforzo viene dopo, quando le manovre non arrivano a 50 mmHg" + pgs(F12) + ": se non sono state fatte, la strada qui sopra è provvisoria.");
+    return h;
+  }
+
+  var GRADINI = [
+    ["1", "Betabloccante non vasodilatatore, alla massima dose tollerata", "I", "B"],
+    ["2", "Verapamil o diltiazem, se il betabloccante non è tollerato o è controindicato", "I", "B"],
+    ["3", "Disopiramide oppure mavacamten, in aggiunta — mai insieme", "I", "B", "IIa", "A"],
+    ["4", "Riduzione settale (NYHA/Ross III–IV)", "I", "B"]
+  ];
+  function htmlScala(s, os, sc) {
+    var h = "", i, o, j;
+    h += "<h3>Il gradino — Fig. 14 e Rec. Table 19" + pgs("p. 3554") + "</h3>";
+    if (sc.gate === "manca") return h + '<div class="esito">' + chip("kx", "gradino —") + '<span class="muted">' + sc.perche + "</span></div>";
+    if (sc.gate === "anno" || sc.gate === "sforzo" || sc.gate === "nonostr") return h + '<div class="esito">' + chip("kx", "Fig. 14 non applicabile") + '<span class="muted">la scala comincia a 50 mmHg, a riposo o provocati' + pgs(F14) + "; la strada è al passo 1</span></div>";
+    if (sc.gate === "asint") {
+      if (sc.controllato) h += '<div class="esito"><span class="grande">Sintomi controllati con la terapia in corso</span>' + chip("k0", "si prosegue") + "</div>" + passo("La Fig. 14 sale di gradino solo se il paziente è «ancora sintomatico»" + pgs(F14) + ": la scala riparte se i sintomi tornano.", true);
+      else {
+        h += '<div class="esito"><span class="grande">Asintomatico con LVOTO ≥50 mmHg</span>' + chip("k1", "di solito nessuna terapia") + "</div>";
+        h += passo("In casi selezionati, <b>betabloccante o verapamil</b> per abbassare le pressioni del VS " + corPill("IIb", "C") + pgs(R19) + ". Il diltiazem in questa riga non c'è.", true);
+      }
+      h += passo("Nessun dato a favore delle procedure invasive nell'asintomatico, qualunque sia il gradiente; ma dati retrospettivi legano i gradienti alti, anche con pochi sintomi, a una mortalità più alta" + pgs(P55) + ".");
+      return h;
+    }
+    if (sc.gate === "insieme") return h + nota("stop", "<b>Disopiramide e inibitore della miosina insieme</b>: in assenza di evidenze contrarie la fonte non li vuole insieme" + pgs(P53) + "; per Camzyos la sicurezza dell'associazione non è stabilita, con monitoraggio" + st(CAM, "4.4") + ". Uno dei due va sospeso: lo strumento non va oltre finché il passo 2 li dice entrambi in corso.");
+    for (i = 0; i < GRADINI.length; i++) {
+      var g = GRADINI[i], att = String(sc.passo) === g[0] || (sc.fine && g[0] === "4");
+      h += '<div class="gr' + (att ? " att" : "") + '"><span class="gn">' + g[0] + "</span><span>" + g[1] + " " + corPill(g[2], g[3]) + (g[4] ? " · " + corPill(g[4], g[5]) : "") + "</span></div>";
+    }
+    var tit = sc.passo === 1 ? "Gradino 1: il betabloccante" : (sc.passo === 2 ? "Gradino 2: verapamil o diltiazem" : (sc.fine ? "Terapia medica esaurita: la riduzione settale" : (sc.base ? "Gradino 3: disopiramide o mavacamten, in aggiunta" : "Gradino 3 in monoterapia")));
+    h += '<div class="esito" style="margin-top:10px"><span class="grande">' + tit + "</span></div>";
+    if (sc.passo === 3 && sc.base === "bb") h += passo("Il betabloccante tollerato <b>resta</b>: il terzo gradino si aggiunge, non lo sostituisce (lettura prudente della Rec. Table 19; incoerenza qui sotto).");
+    if (sc.passo === 3 && sc.base === "cc") h += passo("Verapamil o diltiazem <b>restano</b>, al posto del betabloccante che non si può dare: il terzo gradino si aggiunge a loro" + pgs(R19) + ".");
+    for (i = 0; i < sc.opz.length; i++) {
+      o = sc.opz[i];
+      var cl = o.c ? " " + corPill(o.c, o.l) + pgs(o.src) : "";
+      if (o.no.length) { h += passo(o.t + cl + ". <b>No</b>: " + o.no.join("; ") + ".", false, true); continue; }
+      h += passo(o.t + cl + (o.ris.length ? ". " + o.ris.join("; ") : "") + ".", !o.ris.length || o.id === "srt");
+    }
+    for (j = 0; j < sc.note.length; j++) h += nota("info", sc.note[j]);
+    if (sc.passo === 3 && !sc.fine) h += nota("info", "<b>Aficamten</b>, un secondo inibitore della miosina: la fonte lo cita solo per uno studio di fase II" + pgs(P53) + " e non gli dà una classe; autorizzato nell'UE dal 12/02/2026 per la stessa indicazione del mavacamten, in Italia non è in commercio (Banca dati AIFA, 08/10/2026). La titolazione di entrambi al passo 5.");
+    h += passo("In ogni gradino, per la dispnea da sforzo: <b>diuretici a basse dosi</b>, con cautela " + corPill("IIb", "C") + pgs(R19) + ", senza arrivare all'ipovolemia" + pgs(P53) + " (passo 4).");
+    if (s.fa === "nuova") h += nota("", "<b>FA nuova o mal controllata</b>: peggiora i sintomi dell'ostruzione; ritmo sinusale presto o frequenza controllata" + pgs(P53) + ", e prima di una procedura invasiva " + corPill("IIa", "C") + pgs(R18) + ". Nella HCM con FA l'anticoagulante orale si dà sempre, senza punteggio, salvo controindicazioni " + corPill("I", "B") + pgs(R11) + ": anticoagulante nel <b>Tool OAC FA</b>, frequenza nel <b>Tool FC FA</b>. Con un inibitore della miosina, niente aumenti di dose finché la FA non è controllata (passo 5).");
+    if (s.fe !== null && s.fe < 50) h += nota("", "<b>FEVS " + nf(s.fe, 0) + "%</b>: nella Fig. 13 lo scompenso con FEVS sotto il 50% senza ostruzione ≥50 prende la terapia dello scompenso a FE ridotta; con LVOTO ≥50 la figura manda comunque alla Fig. 14" + pgs(F13) + ". Per la AHA/ACC 2024 con FEVS &lt;50% si sospendono verapamil, diltiazem e disopiramide (" + ahaPill("2a", "C-EO") + ") e, se la disfunzione persiste, l'inibitore della miosina (" + ahaPill("1", "B-R") + ")" + pgs("AHA 2024, p. e1276") + ".") + nota("conf", "CONFRONTO Scompenso, ESC 2026 (→ scheda 08, § 12.2.1): la HCM che sviluppa HFrEF si tratta come ogni altro HFrEF, e i sintomi di scompenso senza HFrEF con le linee guida delle cardiomiopatie. Stessa logica della Fig. 13, che però apre la terapia a FE ridotta già sotto il 50%, anche dove la 2026 non parla di HFrEF.");
+    return h;
+  }
+
+  function htmlRene(s, rn) {
+    var hr = "", cl = rn.cl, inc = incroci(rn), i;
+    if (rn.kids) return '<div class="esito">' + chip("kx", "clearance —") + '<span class="muted">sotto i 18 anni la Cockcroft-Gault non vale: lo strumento non la calcola, e le dosi della scala non le mostra</span></div>';
+    if (rn.dialisi) hr += '<div class="esito">' + chip("k4", "dialisi") + '<span class="muted">la clearance non si calcola; vale la riga «dialisi» di ogni farmaco</span></div>';
+    else if (cl.clcr !== null) {
+      hr += '<div class="esito"><span class="big">Clearance ' + nf(cl.clcr) + " mL/min</span>" + chip(cl.clcr < 30 ? "k4" : (cl.clcr <= 50 ? "k3" : "k1"), "Cockcroft-Gault, peso reale " + nf(s.peso) + " kg") + "</div>";
+      hr += '<div class="muted" style="font-size:12.5px;margin-bottom:4px">Creatinina ' + cl.mg.toFixed(2).replace(".", ",") + " mg/dL = " + nf(cl.umol, 0) + " µmol/L (1 mg/dL = 88,4 µmol/L)" + (cl.bmi !== null ? " · BMI " + nf(cl.bmi) : "") + "</div>";
+      if (cl.agg !== null) hr += '<div class="esito">' + chip("kx", "peso aggiustato " + nf(cl.pesoAgg, 0) + " kg: clearance " + nf(cl.agg)) + '<span class="muted">accanto, non decide (ideale di Devine ' + nf(cl.ibw, 0) + " kg + 0,4 × l'eccesso)</span></div>";
+      if (inc.length) { var tx = []; for (i = 0; i < inc.length; i++) tx.push(inc[i].f + " (soglia " + inc[i].s + ")"); hr += nota("", "<b>Ai lati di una soglia</b>: peso reale e peso aggiustato cadono ai lati opposti per " + tx.join("; ") + ". Decide il peso reale (decisione del medico, 03/10/2026); la scelta resta clinica."); }
+    } else hr += '<div class="esito">' + chip("kx", "clearance —") + '<span class="muted">mancano: ' + cl.manca.join(", ") + "</span></div>";
+    if (rn.egfr !== null) hr += '<div class="esito">' + chip(rn.egfr < 30 ? "k4" : "k1", "eGFR " + nf(rn.egfr, 0)) + '<span class="muted">decide la soglia di 30 del mavacamten, e con la clearance quella dell\'aficamten</span></div>';
+    else if (rn.egfrFuori) hr += nota("", "eGFR fuori scala (1–200): non conta.");
+    return hr;
+  }
+
+  function stato3(proposto, escluso) { return escluso ? "s-no" : (proposto ? "s-ok" : ""); }
+
+  function htmlBB(s, rn, sc) {
+    var h = '<div class="esito"><span class="nome">Betabloccanti non vasodilatatori</span>' + corPill("I", "B") + pgs(R19) + "</div>", d, r, x;
+    h += passo("La fonte non dà dosi: li vuole titolati alla massima dose tollerata" + pgs(R19) + ", e quasi nessuno studio confronta un betabloccante con l'altro; un piccolo RCT contro placebo col <b>metoprololo</b>, l'unico nominato" + pgs(P53) + ". Le dosi qui sotto sono delle schede tecniche, molecola per molecola.");
+    if (rn.kids) return h + passo(KIDS);
+    var gr = s.sesso === "f" && s.grav === "gr";
+    // propranololo
+    r = rn.dialisi ? "in dialisi l'«insufficienza renale» fra le controindicazioni, senza grado" + st("Inderal 40 mg", "4.3") + ", tocca di sicuro: lettura prudente, <b>non si usa</b>" : clc(rn) + "nessuna soglia; cautela nella dose iniziale" + st("Inderal 40 mg", "4.2, 4.4") + ", ma «insufficienza renale» fra le controindicazioni, senza grado" + st("Inderal 40 mg", "4.3") + dv() + " da quale clearance valga";
+    h += riga("Propranololo", "<b>10–40 mg 3–4 volte al giorno</b>; nessun massimo dichiarato nell'adulto, si titola alla massima dose tollerata" + stT("Inderal 40 mg, Atnahs, AIFA 21/03/2023", "4.2") + "; la CMIO è fra le indicazioni (4.1).<br><b>Rene</b>: " + r + ".<br>Non con verapamil o diltiazem (4.3); «particolare cautela» con la disopiramide (4.5)." + (gr ? " <b>Gravidanza</b>: «generalmente controindicato» per la scheda (4.3), contro la riga che fa proseguire il betabloccante in corso " + corPill("IIa", "C") + pgs(R32) + "." : "") + " Confezione da 30 in carenza dal 23/10/2024; c'è quella da 50 (Banca dati AIFA, 03/10/2026).");
+    // nadololo
+    x = rn.dialisi ? "hd" : nadoBanda(rn.crcl);
+    if (x === "hd") r = "in dialisi la tabella non dice niente; il nadololo è dializzabile" + st("Nadololo Cheplapharm", "4.9") + dv() + " intervallo e dose in dialisi";
+    else if (x === null) r = "— serve la clearance: &gt;50 ogni 24 h · 31–50 ogni 24–36 h · 10–30 ogni 24–48 h · &lt;10 ogni 40–60 h" + st("Nadololo Cheplapharm", "4.2");
+    else r = clc(rn) + "fascia " + NADO_FASCIA[x] + " → <b>" + NADO_INT[x] + "</b>: cambia l'intervallo, non la dose" + st("Nadololo Cheplapharm", "4.2") + (rn.crcl > 30 && rn.crcl < 31 ? "; fra 30 e 31 la tabella non dice, e lo strumento prende l'intervallo più lungo" : "");
+    if (x !== null) r += "; però «evitandone l'impiego nelle forme gravi»" + st("Nadololo Cheplapharm", "4.4") + dv() + " la soglia delle forme gravi";
+    d = avvisoAgg(rn, "nadololo");
+    h += riga("Nadololo", "<b>40 mg una volta al giorno, fino a 160 mg</b>; con bradicardia si torna a 40 mg" + stT("Nadololo Cheplapharm 80 mg, AIFA 16/09/2025", "4.2") + "; fra le indicazioni i «segni funzionali di cardiomiopatia ostruttiva» (4.1).<br><b>Rene</b>: " + r + "." + (d ? "<br>" + d : "") + "<br>Unico nadololo in Italia, in carenza dal 23/06/2026 nel canale retail.");
+    // metoprololo
+    r = rn.dialisi ? "in dialisi l'«insufficienza renale grave» fra le controindicazioni" + st("Seloken", "4.3") + " tocca: lettura prudente, <b>non si usa</b> (come nel Tool FC FA)" : clc(rn) + "nessun aggiustamento" + st("Seloken", "4.2") + ", ma «insufficienza renale grave» fra le controindicazioni, senza soglia" + st("Seloken", "4.3") + dv() + " la soglia di «grave»";
+    h += riga("Metoprololo tartrato", "Nelle aritmie <b>100–200 mg/die in 2–3 dosi</b>, a stomaco vuoto" + stT("Seloken 100 mg, Recordati, AIFA 28/08/2026", "4.2") + ". Nella HCM è fuori indicazione: la scheda dice «aritmie cardiache» (4.1). È l'unico che la fonte nomina, per un piccolo RCT, senza dose" + pgs(P53) + ".<br><b>Rene</b>: " + r + ". Il succinato in Italia non è autorizzato.");
+    // bisoprololo
+    x = bisoTetto(rn);
+    r = x === null ? "— serve la clearance: sotto 20 non oltre 10 mg/die" + st("Bisoprololo EG", "4.2") : (x ? (rn.dialisi ? "in dialisi" : "ClCr " + nf(rn.crcl) + " mL/min (&lt;20)") + ": <b>non oltre 10 mg/die</b>; non si rimuove con la dialisi" + st("Bisoprololo EG", "4.2") : clc(rn) + "sopra 20 nessun limite renale" + st("Bisoprololo EG", "4.2"));
+    d = avvisoAgg(rn, "bisoprololo");
+    h += riga("Bisoprololo", "Nessuna posologia per la HCM: nell'ipertensione e nell'angina <b>10 mg/die</b>, inizio 5 mg, «in casi isolati» 20 mg/die" + stT("Concor 10 mg, Dompé, AIFA 28/03/2025", "4.2") + "; nello scompenso da 1,25 a 10 mg/die (Congescor). Fuori indicazione nella HCM.<br><b>Rene</b>: " + r + ". Tre schede, tre regole: si segue quella con la soglia." + (d ? "<br>" + d : ""));
+    // atenololo
+    x = rn.dialisi ? "hd" : atenBanda(rn.crcl);
+    if (x === "hd") r = "emodialisi: <b>50 mg dopo ogni seduta</b>, in ospedale" + st("Tenormin", "4.2");
+    else if (x === null) r = "— serve la clearance: &gt;35 nessuna modifica · 15–35 · &lt;15 · emodialisi" + st("Tenormin, Atenololo AHCL", "4.2");
+    else if (x === 0) r = clc(rn) + "sopra 35 nessuna modifica" + st("Tenormin, Atenololo AHCL", "4.2");
+    else if (x === 1) r = clc(rn) + "fascia 15–35 → <b>25–50 mg/die</b>, o 50–100 mg a giorni alterni" + st("Atenololo AHCL", "4.2") + ", la lettura prudente; Tenormin dice 50 mg/die o 100 mg a giorni alterni" + st("Tenormin", "4.2");
+    else r = clc(rn) + "sotto 15 → <b>25–50 mg a giorni alterni</b>" + st("Atenololo AHCL", "4.2") + ", la lettura prudente; Tenormin dice 50 mg a giorni alterni o 100 mg ogni 4 giorni" + st("Tenormin", "4.2");
+    d = avvisoAgg(rn, "atenololo");
+    h += riga("Atenololo", (gr ? "<b>No in gravidanza</b>: fra i farmaci controindicati" + pgs(P84) + ". " : "") + "Nessuna posologia per la HCM: nell'angina <b>100 mg/die</b>, oltre non si ottiene altro" + stT("Tenormin, Atnahs, AIFA 29/12/2022", "4.2") + "; nelle aritmie 50–100 mg/die" + st("Atenololo AHCL, Accord, AIFA 29/04/2026", "4.2") + ". Fuori indicazione nella HCM.<br><b>Rene</b>: " + r + "." + (d ? "<br>" + d : "") + "<br>Non con verapamil o diltiazem e.v.; allattamento controindicato" + st("Tenormin", "4.3") + ".");
+    return h;
+  }
+
+  function htmlCC(s, rn, os) {
+    var h = '<div class="esito"><span class="nome">Verapamil e diltiazem</span>' + corPill("I", "B") + pgs(R19) + "</div>";
+    h += passo("Al posto del betabloccante quando non è tollerato o è controindicato" + pgs(R19) + "; nell'asintomatico selezionato il solo verapamil " + corPill("IIb", "C") + pgs(R19) + ".");
+    if (rn.kids) return h + passo(KIDS);
+    var noV = [], f = s.sesso === "f", gr = f && s.grav === "gr", fert = f && (s.grav === "contr" || s.grav === "nocontr");
+    if (s.fe !== null && s.fe < 35) noV.push("<b>FEVS " + nf(s.fe, 0) + "% (&lt;35)</b>: controindicato" + st("Isoptin", "4.3"));
+    var v = "";
+    if (noV.length) v += "<b>No</b>: " + noV.join("; ") + ".<br>";
+    v += "Da <b>40 mg 3 volte al giorno</b> fino a <b>480 mg/die</b>" + pgs(P53) + "; scheda: 40–80 mg 3 volte al giorno, o 120 mg a rilascio prolungato mattina e sera fino a 2 compresse 2 volte al giorno" + st("Isoptin, Viatris, AIFA 05/10/2023", "4.2") + ".";
+    v += "<br><b>Rene</b>: " + clc(rn) + "nessun aggiustamento né soglie: cautela e stretto monitoraggio; il 70% esce con le urine come metaboliti" + st("Isoptin", "4.4") + (rn.dialisi ? "; la dialisi la scheda non la nomina" + dv() : "") + ".";
+    if (s.cp === "c") v += "<br><b>Fegato</b>: Child-Pugh C, letto dallo strumento come epatopatia grave → circa il <b>30% della dose usuale</b>" + st("Isoptin", "4.4") + ".";
+    if (os.max !== null && os.max >= SOGLIE.vera) v += "<br><b>Gradiente " + os.max + " mmHg (≥100)</b>: con cautela, può scatenare un edema polmonare; così anche con PAPs alta" + pgs(P53) + ".";
+    else v += "<br>Con cautela se l'ostruzione è severa (≥100 mmHg) o la PAPs è alta: può scatenare un edema polmonare" + pgs(P53) + ".";
+    if (s.gRip !== null && s.gRip > 100) v += " Per la AHA/ACC 2024, con gradiente a riposo molto alto (per esempio &gt;100 mmHg), dispnea a riposo o ipotensione è potenzialmente dannoso " + ahaPill("3: Harm", "C-LD") + pgs("AHA 2024, p. e1271") + ".";
+    v += "<br>Scheda: controindicato con FE &lt;35% e/o pressione polmonare &gt;20 mmHg, PAS &lt;90 mmHg, FA o flutter con via accessoria, ivabradina; la 4.3 vieta in generale l'associazione con i betabloccanti; la disopiramide non si dà nelle 48 h prima né nelle 24 h dopo" + st("Isoptin", "4.3, 4.5") + ", mentre la fonte scrive che le due si possono associare" + pgs(P53) + ". Inibitore moderato del CYP3A4: con il mavacamten nel metabolizzatore lento o non determinato, avviarlo o aumentarlo fa scendere la dose (passo 5)." + (gr ? " <b>Gravidanza</b>: il verapamil orale è fra gli antiaritmici ben tollerati" + pgs(P84) + "." : "");
+    h += riga("Verapamil", v);
+    var noD = [];
+    if (gr) noD.push("<b>Gravidanza</b>: la scheda lo controindica in gravidanza accertata o presunta e nell'allattamento" + st("Dilzene", "4.3") + "; la fonte lo mette fra i farmaci che spesso si possono continuare se l'indicazione è chiara, per possibili effetti teratogeni" + pgs(P84));
+    var d = "";
+    if (noD.length) d += "<b>No</b>: " + noD.join("; ") + ".<br>";
+    d += "Da <b>60 mg 3 volte al giorno</b> fino a <b>360 mg/die</b>" + pgs(P53) + "; scheda (angina): 60 mg 3 volte al giorno fino a 2 compresse 3 volte al giorno, o 120 mg a rilascio prolungato ogni 12 h" + st("Dilzene, Alfasigma, AIFA 11/01/2023", "4.2") + ".";
+    d += "<br><b>Rene</b>: " + clc(rn) + "nell'insufficienza renale la dose iniziale si dimezza — mezza compressa da 60 mg 3 volte al giorno —, senza soglia; poi la dose minima efficace" + st("Dilzene", "4.2") + ".";
+    if (fert && !gr) d += "<br><b>Donna in età fertile</b>: la scheda lo controindica nelle donne in età fertile e chiede di escludere la gravidanza e una contraccezione efficace" + st("Dilzene", "4.3, 4.6") + ".";
+    d += "<br>Per bocca le indicazioni della scheda sono angina e ipertensione: nella HCM è fuori indicazione. Controindicato con amiodarone, nello scompenso congestizio, con bradicardia grave sotto 40/min" + st("Dilzene", "4.3") + ". Il diltiazem e.v. in Italia non è più in commercio. Inibitore moderato del CYP3A4, come il verapamil, per il mavacamten.";
+    h += riga("Diltiazem", d);
+    return h;
+  }
+
+  function htmlDiso(s, rn, sc) {
+    var mono = sc.base === null && sc.passo === 3;
+    var h = '<div class="esito"><span class="nome">Disopiramide</span>' + corPill("I", "B") + ' <span class="pg">in aggiunta</span> · ' + corPill("IIb", "C") + ' <span class="pg">in monoterapia</span>' + pgs(R19) + "</div>";
+    if (rn.kids) return h + passo(KIDS);
+    var ex = disoEsclusa(s), gr = s.sesso === "f" && s.grav === "gr";
+    if (ex.length) h += passo("<b>No</b>: da evitare con " + ex.join(", ") + pgs(P53) + ".", false, true);
+    if (s.qtc !== null && s.qtc > SOGLIE.qtc) h += passo(s.diso === "in" ? "<b>QTc " + s.qtc + " ms</b>: sopra 500 la dose <b>si riduce</b>" + pgs(R19d) + "; la scheda la sospende con QT o QRS allargati oltre il 25%" + st("Ritmodan", "4.4") + "." : "<b>QTc " + s.qtc + " ms</b>: in titolazione la dose si riduce già sopra 500" + pgs(R19d) + ", e la scheda controindica un QT allungato preesistente" + st("Ritmodan", "4.3") + ": lettura prudente, non si inizia.", s.diso === "in", s.diso !== "in");
+    if (s.mi === "in") h += passo("<b>No con l'inibitore della miosina in corso</b>: la fonte non li vuole insieme" + pgs(P53) + ".", false, true);
+    h += passo("Titolata alla massima dose tollerata, di solito <b>400–600 mg/die</b>" + pgs(P53) + "; QTc controllato in titolazione, e dose ridotta se supera 500 ms" + pgs(R19d) + ". Scheda: capsule da 100 mg, attacco <b>400–600 mg/die in 3–4 dosi</b>, mantenimento <b>300–400 mg/die</b>, non meno di una capsula ogni 8 h; Retard 250 mg, 1–2 compresse al giorno in 2 dosi, eventualmente 3" + stT("Ritmodan e Ritmodan Retard, Cheplapharm, AIFA 03/03/2026", "4.2") + ".", sc.passo === 3 && !sc.fine && !ex.length);
+    h += passo("<b>Rene</b>: " + clc(rn) + "con le capsule, nell'insufficienza renale si allunga l'intervallo fra le dosi, senza soglia né numeri; emivita 17 ± 5 h nella grave" + st("Ritmodan", "4.2, 5.2") + dv() + " l'intervallo per fascia di clearance. Il Retard è controindicato nell'insufficienza renale" + st("Ritmodan Retard", "4.3") + (rn.dialisi ? ": in dialisi, escluso" : ", senza grado") + ". Ipoglicemia, anche grave, più probabile nell'insufficienza renale e nell'anziano" + st("Ritmodan", "4.4") + ".");
+    h += passo("Antiaritmico di classe IA: limitano la dose gli effetti anticolinergici — occhi e bocca secchi, minzione difficile, stipsi" + pgs(P53) + ". <b>Mai con l'inibitore della miosina</b>" + pgs(P53) + ".");
+    h += nota("", "<b>Contrasto con la scheda tecnica</b>: la CMIO non è un'indicazione di Ritmodan, e le associazioni con betabloccanti, verapamil e diltiazem sono fra quelle controindicate, salvo casi particolari" + st("Ritmodan", "4.5") + ": è l'opposto della riga I B, che la vuole in aggiunta al betabloccante. Chi la prescrive deve saperlo.");
+    h += nota("conf", "CONFRONTO Aritmie ventricolari, ESC 2022 (→ prontuario del capitolo 11, Tab. 8): disopiramide 250–750 mg/die. La 2023 dice di solito 400–600." + (gr ? " <b>Gravidanza</b>: si può spesso continuare se l'indicazione è chiara, attenti alle contrazioni uterine" + pgs(P84) + "; per la ESC 2025 sulla gravidanza nella HCM solo se il beneficio supera quel rischio, IIb C (→ capitolo 22)." : ""));
+    if (mono) h += passo("Qui la base è vuota: <b>in monoterapia</b>, perché betabloccanti e verapamil/diltiazem non sono possibili " + corPill("IIb", "C") + pgs(R19) + ".");
+    return h;
+  }
+
+  function htmlDiur(s, rn) {
+    var h = '<div class="esito"><span class="nome">Diuretici a basse dosi</span>' + corPill("IIb", "C") + pgs(R19) + "</div>";
+    h += passo("Dell'ansa o tiazidici, con cautela, per la dispnea da sforzo; senza arrivare all'ipovolemia, che abbassa il precarico e aumenta l'ostruzione" + pgs(P53) + ". La fonte non dà dosi.");
+    if (rn.kids) return h + passo(KIDS);
+    var fr = furoRene(rn), r;
+    if (fr === "sotto") r = (rn.dialisi ? "in dialisi" : "funzione renale sotto 10 mL/min") + ": la scheda chiede un «aggiustamento della dose» senza dire quale" + st("Lasix", "4.2") + dv() + " come aggiustare; controindicata nell'insufficienza renale oligo-anurica che non risponde" + st("Lasix", "4.3");
+    else if (fr === "manca") r = "— serve la funzione renale: sotto 10 mL/min la scheda chiede un aggiustamento senza dire quale" + st("Lasix", "4.2");
+    else r = clc(rn) + "sopra 10 mL/min nessun aggiustamento" + st("Lasix", "4.2") + "; emivita fino a 24 h nell'insufficienza grave" + st("Lasix", "5.2");
+    var ag = avvisoAgg(rn, "furosemide");
+    h += riga("Furosemide orale", "La scheda non definisce una «bassa dose»: la minima dell'adulto è <b>20 mg/die</b> (soluzione orale, ipertensione) o <b>25 mg</b> (una compressa); negli edemi 25–75 mg al mattino, o 40 mg di soluzione con mantenimento 40–80 mg/die; «la dose più bassa sufficiente»" + stT("Lasix, Sanofi, AIFA 05/07/2023", "4.2") + ".<br><b>Rene</b>: " + r + "." + (ag ? "<br>" + ag : "") + "<br>Controindicata con ipovolemia o disidratazione, ipopotassiemia e iposodiemia" + st("Lasix", "4.3") + "; con ACE-inibitori o sartani si sospende o si riduce 3 giorni prima di iniziarli" + st("Lasix", "4.5") + "." + (s.sesso === "f" && s.grav === "gr" ? " <b>Gravidanza</b>: controindicata nel primo trimestre e nell'allattamento" + st("Lasix", "4.3") + "." : ""));
+    h += riga("Tiazidico", "La fonte non nomina la molecola né la dose, e nessuna scheda tecnica di un tiazidico è stata letta" + dv() + " quale tiazidico, e a quale dose «bassa».<br><b>Rene</b>:" + dv() + ".");
+    return h;
+  }
+
+  function htmlEvita(s) {
+    var h = '<div class="esito"><span class="nome">Da evitare con l\'ostruzione</span>' + corPill("IIa", "C") + pgs(R18) + "</div>";
+    h += passo("<b>Digossina</b> e <b>vasodilatatori</b> arteriosi e venosi, nitrati e inibitori delle fosfodiesterasi compresi: da evitare se si può, con ostruzione a riposo o provocabile " + corPill("IIa", "C") + pgs(R18) + ".", true);
+    h += passo("Sempre: niente disidratazione né eccesso di alcol; il calo di peso si incoraggia" + pgs(P53) + ".");
+    h += passo("I nitrati: Monoket e Carvasin controindicano la cardiomiopatia ipertrofica ostruttiva" + st("Monoket, Carvasin", "4.3") + ", mentre la fonte usa il nitrato orale per provocare il gradiente quando il paziente non può fare sforzo" + pgs(R19c) + ".");
+    if (s.fa && s.fa !== "nessuna") h += passo("Con la FA la digossina sta fra i farmaci della frequenza (Tool FC FA); con l'ostruzione vale questa riga.");
+    return h;
+  }
+
+  function htmlIpo(s, rn) {
+    var h = '<div class="esito"><span class="nome">Ipotensione con edema polmonare</span>' + corPill("IIa", "C") + pgs(R19) + "</div>";
+    if (!s.ipo) return h + '<div class="muted" style="font-size:13px">Segna il quadro qui sopra per vedere farmaci e dosi.</div>';
+    h += passo("Prima i liquidi. Se non bastano, con un'ostruzione provocabile severa: <b>betabloccante per os o e.v. e vasocostrittore</b> " + corPill("IIa", "C") + pgs(R19) + ". La fonte non nomina le molecole e non dà dosi: quelle qui sotto vengono dalle schede tecniche.", true);
+    h += passo("Niente nitrati né diuretico ad alte dosi: vasodilatatori e ipovolemia aumentano l'ostruzione" + pgs(P53) + ".", false, true);
+    if (rn.kids) return h + passo(KIDS);
+    var r = rn.dialisi ? "in dialisi l'«insufficienza renale grave» fra le controindicazioni" + st("Seloken", "4.3") + " tocca: lettura prudente, non si usa" : clc(rn) + "nessun aggiustamento" + st("Seloken", "4.2") + "; «insufficienza renale grave» fra le controindicazioni, senza soglia" + st("Seloken", "4.3") + dv() + " la soglia di «grave»";
+    h += riga("Metoprololo e.v.", "Fino a <b>5 mg</b> e.v. lentamente (1–2 mg/min), ripetibile ogni 5 minuti fino all'effetto; oltre 15 mg di rado serve" + stT("Seloken 1 mg/ml, Recordati, AIFA 28/08/2026", "4.2") + ".<br><b>Rene</b>: " + r + ".<br>La scheda lo controindica nello scompenso instabile con edema polmonare, ipoperfusione o ipotensione" + st("Seloken", "4.3") + ": è proprio il quadro della riga IIa C, dove però l'ipotensione nasce dall'ostruzione dinamica, distinzione che la scheda non fa. Non con verapamil o diltiazem e.v.");
+    var e = esmololo(s.peso), es;
+    if (e) es = "Sul peso reale di " + nf(s.peso) + " kg: carico <b>" + nf(e.carico) + " mg</b> in 1 minuto (500 µg/kg/min), poi <b>" + nf(e.m50, 0) + " mg/h</b> (50 µg/kg/min) per 4 minuti; se non basta, nuovo carico e mantenimento a 100, poi 150, poi 200 µg/kg/min — <b>" + nf(6 * s.peso, 0) + ", " + nf(9 * s.peso, 0) + ", " + nf(e.m200, 0) + " mg/h</b>" + stT("Brevibloc, Baxter, AIFA 16/06/2026", "4.2") + ". Nessun tetto assoluto nella scheda: oltre 200 µg/kg/min poco effetto in più e più reazioni avverse.";
+    else es = "Carico 500 µg/kg/min per 1 minuto, poi 50 µg/kg/min per 4 minuti; a gradini 100, 150, 200 µg/kg/min" + st("Brevibloc", "4.2") + ". <span class=\"muted\">— serve il peso (25–250 kg) per i milligrammi.</span>";
+    h += riga("Esmololo e.v.", es + "<br><b>Rene</b>: " + clc(rn) + "cautela, senza dose né soglia: il metabolita acido si elimina col rene, con emivita circa 10 volte più lunga nella malattia renale terminale; iperkaliemia pericolosa in emodialisi" + st("Brevibloc", "4.2, 4.4") + dv() + " la dose nella malattia renale terminale.<br>Controindicato con grave ipotensione, collasso cardiaco scompensato, shock cardiogeno, ed entro 48 h dal verapamil e.v." + st("Brevibloc", "4.3") + "; indicazione le tachiaritmie sopraventricolari, qui fuori indicazione. Brevibloc è in carenza; Esmololo Hikma 10 mg/ml ha lo stesso schema.");
+    h += riga("Fenilefrina e.v.", "Bolo <b>50–100 µg</b>, ripetibile fino all'effetto, mai oltre 100 µg per bolo; infusione da <b>25–50 µg/min</b>, efficace fra 25 e 100 µg/min, titolata sulla sistolica" + stT("Fenilefrina Aguettant 50 µg/ml, AIFA 31/01/2021", "4.2") + ".<br><b>Rene</b>: " + clc(rn) + "«dosi più basse possono essere necessarie» con funzione renale ridotta, senza soglia né numero" + st("Fenilefrina Aguettant", "4.2, 5.2") + dv() + " di quanto ridurre, e da quale clearance.<br>Indicazione solo l'ipotensione in anestesia: qui è fuori indicazione. Aumenta il postcarico e riduce la gittata, e nello scompenso grave può peggiorarlo" + st("Fenilefrina Aguettant", "4.4") + ": nell'ostruzione dinamica il postcarico più alto è l'effetto cercato, ma questo paziente ha anche l'edema polmonare. La 2023 dice «vasocostrittori» senza nominarli; la AHA/ACC 2024 nomina la fenilefrina " + ahaPill("1", "C-LD") + pgs("AHA 2024, p. e1271") + ".");
+    return h;
+  }
+
+  function htmlMI(s, rn, os, sc, m) {
+    var h = "", i;
+    if (!s.mol) return '<div class="esito">' + chip("kx", "inibitore della miosina —") + '<span class="muted">scegli la molecola (passo 5)</span></div>';
+    var mava = s.mol === "mava";
+    var avvio = (mava ? s.mfase : s.afase) === "avvio";
+    var CH = { ok:["k0", avvio ? "si può iniziare" : "in terapia"], sosp:["k3", mava ? "sospeso" : "interrotto"], stop:["k4", "interrotto per sempre"], no:["k4", "non si usa"], nd:["kx", "dose —"], manca:["kx", "—"] };
+    var c = CH[m.stato] || CH.manca, nd = m.stato === "nd";
+    h += '<div class="esito"><span class="nome">' + (mava ? "Mavacamten" : "Aficamten") + "</span>" + chip(c[0], c[1]) + (mava ? " " + corPill("IIa", "A") + ' <span class="pg">in aggiunta</span> · ' + corPill("IIa", "B") + ' <span class="pg">in monoterapia</span>' + pgs(R19) : ' <span class="pg">nessuna classe ESC 2023; in Italia non in commercio (Banca dati AIFA, 08/10/2026)</span>') + "</div>";
+    if (m.stato === "no") for (i = 0; i < m.no.length; i++) h += passo("No. " + m.no[i], false, true);
+    // la scheda non da' una dose perche' non e' stato studiato: «—» e la
+    // ragione, non «controindicato» (decisione del medico, 09/10/2026)
+    for (i = 0; i < m.nd.length; i++) h += passo('<span class="muted">—</span> ' + m.nd[i]);
+    if (nd && m.nd.length) h += nota("", "<b>Nessuna dose</b>: lo strumento non propone né l'avvio né la titolazione, e decide lo specialista. La scheda non lo controindica: dice che una dose non la può raccomandare (decisione del medico, 09/10/2026).");
+    for (i = 0; i < m.ndDati.length; i++) h += passo('<span class="muted">—</span> ' + m.ndDati[i]);
+    if (m.stato === "manca" || (nd && !m.nd.length)) for (i = 0; i < m.manca.length; i++) h += passo('<span class="muted">—</span> ' + m.manca[i] + ".");
+    if (m.stato === "ok" || m.stato === "sosp" || m.stato === "stop") {
+      h += '<div class="azione" id="miAzione">' + m.azione + "</div>";
+      if (m.prima !== undefined && m.prima !== null) h += passo(m.dose === m.prima ? "Dose " + (mava ? md(m.prima) : m.prima + " mg") + " una volta al giorno, <b>invariata</b>." : "Dose " + (mava ? md(m.prima) : m.prima + " mg") + " → " + (m.dose === 0 ? "<b>" + (mava ? "sospeso" : "interrotto") + "</b>" : "<b>" + (mava ? md(m.dose) : m.dose + " mg") + "</b> una volta al giorno") + ".", true);
+      if (m.prossimo) h += passo("<b>Prossimo controllo</b>: " + m.prossimo + ".", true);
+    }
+    for (i = 0; i < m.ris.length; i++) h += nota("", m.ris[i]);
+    var it = m.inter;
+    if (it && nd && (it.azioni.length || (it.evita && it.evita.length) || it.righe.length)) h += passo("Farmaci associati: le regole di dose della scheda" + st(mava ? CAM : MYQ, "4.2, 4.5") + " qui non si traducono in una dose, perché una dose non c'è; valgono se lo specialista decide di usarlo.");
+    else if (it) {
+      for (i = 0; i < it.azioni.length; i++) h += nota("stop", "<b>Interazione</b>: " + it.azioni[i].t + ".");
+      if (it.evita) for (i = 0; i < it.evita.length; i++) h += nota("stop", it.evita[i]);
+      for (i = 0; i < it.righe.length; i++) h += passo(it.righe[i]);
+    }
+    for (i = 0; i < m.note.length; i++) h += passo(m.note[i]);
+    if (s.interc || s.fa === "nuova") h += passo("Malattia intercorrente grave o aritmia non controllata: si valuta la FEVS, e la dose non sale finché il quadro non si risolve" + st(mava ? CAM : MYQ, "4.2, 4.4") + ".");
+    if (mava) {
+      h += passo("La riga ESC lo vuole titolato alla massima dose tollerata con la sorveglianza eco della FEVS, in aggiunta al betabloccante o, se non si può, a verapamil o diltiazem, nell'adulto " + corPill("IIa", "A") + pgs(R19) + "; non con la disopiramide, sì con betabloccanti o calcioantagonisti, fino a 15 mg con l'eco secondo la scheda" + pgs(P53) + ". Le soglie di gradiente e FEVS sono <b>solo della scheda</b>" + st("Camzyos, Bristol-Myers Squibb, EMA 02/06/2025", "4.2") + ".");
+      h += passo("Con betabloccante e verapamil o diltiazem insieme, la sicurezza dell'associazione non è stabilita: monitoraggio attento; iniziando o aumentando un inotropo negativo, FEVS fino a dose stabile" + st(CAM, "4.4, 4.5") + ". Dose saltata: appena possibile, mai due nello stesso giorno" + st(CAM, "4.2") + ". Emivita 6–9 giorni, 23 nel metabolizzatore lento" + st(CAM, "5.2") + ".");
+      if (s.sesso === "f" && s.grav !== "nf") h += nota("conf", "CONFRONTO AHA/ACC 2024: in gravidanza il mavacamten è controindicato " + ahaPill("3: Harm", "C-EO") + pgs("AHA 2024, p. e1286") + ". Gravidanza ESC 2025 (→ capitolo 22): inibitori della miosina III C, sospesi almeno 6 mesi prima di cercare la gravidanza. La ESC 2023 non ne parla in gravidanza.");
+    } else {
+      h += passo("La fonte cita l'aficamten per uno studio di fase II, REDWOOD-HCM, senza classe" + pgs(P53) + ": le righe della Rec. Table 19 nominano il mavacamten e il suo tetto di 15 mg, che <b>non vale per l'aficamten</b>, che arriva a 20 mg; la frase sulla disopiramide invece parla della classe" + pgs(P53) + ". Le soglie sono della scheda" + st("Myqorzo, Cytokinetics, EMA 01/09/2026", "4.2") + ".");
+      h += passo("Calcioantagonisti non diidropiridinici o disopiramide, iniziati o aumentati: stretta supervisione e FEVS fino a dosi stabili" + st(MYQ, "4.5") + ". Alla sospensione i sintomi possono tornare: scalare la dose può attenuarlo" + st(MYQ, "4.2, 4.4") + ". Compressa intera; dose saltata nello stesso giorno, mai due" + st(MYQ, "4.2") + ".");
+    }
+    if (sc.passo && sc.passo < 3 && !sc.fine && s.mi !== "in") h += nota("info", "La scala di questo paziente è al gradino " + sc.passo + ": l'inibitore della miosina è un farmaco del terzo gradino" + pgs(F14) + ".");
+    return h;
+  }
+
+  function htmlSrt(s, os, sc, rd) {
+    var h = "<h3>Riduzione settale — Rec. Table 20" + pgs("pp. 3556–3557") + "</h3>", i, r;
+    if (rd.gate === "manca") return h + '<div class="esito">' + chip("kx", "riduzione settale —") + '<span class="muted">servono gradiente e sintomi (passo 1)</span></div>';
+    if (rd.gate === "sotto50") return h + '<div class="esito">' + chip("kx", "non indicata") + '<span class="muted">tutte le righe chiedono un gradiente ≥50 mmHg, a riposo o massimo provocato' + pgs(R20) + "</span></div>" + (catGrad(os.max) === "30" ? nota("info", "Fra 30 e 50 mmHg la riduzione invasiva si considera solo in pochissimi casi selezionati senza un'altra causa evidente dei sintomi, e i dati mancano" + pgs(P53) + ".") : "");
+    if (rd.gate === "asint") return h + '<div class="esito">' + chip("kx", "non indicata") + '<span class="muted">nell\'asintomatico nessun dato a favore delle procedure invasive, qualunque sia il gradiente' + pgs(P55) + "</span></div>";
+    if (!rd.righe.length) h += '<div class="esito">' + chip("kx", "nessuna riga ESC") + '<span class="muted">' + (rd.note.length ? "" : "i sintomi di questo paziente non entrano in nessuna riga") + "</span></div>";
+    for (i = 0; i < rd.righe.length; i++) {
+      r = rd.righe[i];
+      h += passo(r.t + " " + corPill(r.c, r.l) + pgs(r.src) + (sc.fine ? "." : ". <b>Non ancora</b>: prima la terapia medica massima tollerata, al gradino " + (sc.passo || "—") + " della scala (passo 2)."), sc.fine);
+    }
+    for (i = 0; i < rd.note.length; i++) h += nota("info", rd.note[i]);
+    h += passo("La fanno operatori esperti dentro un <b>team multidisciplinare esperto di HCM</b> " + corPill("I", "C") + pgs(R20) + ", dopo la checklist della Fig. 15: altre cause dei sintomi (obesità, polmone, coronarie, anemia, tiroide, aritmie, farmaci, amiloide, ostruzione del tratto di efflusso destro), meccanismo dell'ostruzione, mitrale, distribuzione dell'ipertrofia" + pgs(F15) + ".");
+    if (s.fa === "nuova") h += passo("FA nuova o mal controllata: <b>prima ritmo sinusale o frequenza controllata</b>, poi la procedura " + corPill("IIa", "C") + pgs(R18) + ".", true);
+    for (i = 0; i < rd.proc.length; i++) { r = rd.proc[i]; h += passo(r.t + (r.c ? " " + corPill(r.c, r.l) + pgs(r.src) : "") + "." + (r.x ? " " + r.x : ""), rd.pronto); }
+    for (i = 0; i < rd.agg.length; i++) { r = rd.agg[i]; h += passo(r.t + " " + corPill(r.c, r.l) + pgs(r.src) + "."); }
+    h += passo("Dopo una miectomia isolata con IM moderata o severa: riparazione mitralica " + corPill("IIa", "C") + pgs(R20) + ", sostituzione " + corPill("IIb", "C") + pgs(R20b) + ".");
+    h += "<h3 style=\"margin-top:12px\">Pacing nell'ostruzione — Rec. Table 21" + pgs("p. 3557") + "</h3>";
+    if (!rd.pace.length) h += passo('<span class="muted">Solo con controindicazioni a miectomia e alcol (o alto rischio di blocco), o con un ICD già indicato: segnali al passo 7.</span>');
+    for (i = 0; i < rd.pace.length; i++) { r = rd.pace[i]; h += passo(r.t + (r.c ? " " + corPill(r.c, r.l) + pgs(r.src) : pgs(r.src)) + ".", !!r.c); }
+    if (s.icd) h += passo("La decisione sull'ICD non è di questo strumento: è del <b>Tool HCM SCD</b> (dai 16 anni) e, nel bambino, del calcolatore HCM Risk-Kids.");
+    h += nota("conf", "CONFRONTO Pacing, ESC 2021 (→ scheda 06, § 6.5): tre righe sul pacing AV sequenziale con AV breve nell'ostruzione ≥50 mmHg in ritmo sinusale — con altre indicazioni a pacing o ICD e sintomi refrattari o gradiente ≥50, IIb B; adulti non idonei o non disposti alla riduzione settale, IIb B; alto rischio di BAV durante l'alcolizzazione, IIb C. La 2023 tiene la stessa classe ma scende a livello C e aggiunge la riga sull'ICD bicamerale. Il Tool Modo di pacing non tratta la HCM ostruttiva.");
+    return h;
+  }
+
+  function htmlAha(s, os, sc) {
+    var h = "", f14 = os.via === "f14";
+    function r(c, l, t, p) { return passo(ahaPill(c, l) + " " + t + pgs("AHA 2024, p. " + p)); }
+    h += "<h4>Farmaci nell'ostruzione" + (f14 ? " — tocca questo caso" : "") + "</h4>";
+    h += r("1", "B-NR", "Betabloccanti non vasodilatatori, titolati all'efficacia o alla massima dose tollerata.", "e1270");
+    h += r("1", "B-NR", "Betabloccante <b>inefficace</b> o non tollerato → si sostituisce con verapamil o diltiazem; nella stessa cella B-NR per il verapamil, C-LD per il diltiazem.", "e1271");
+    h += r("1", "B-R", "Sintomi che restano con betabloccante o calcioantagonista → si aggiunge un inibitore della miosina (solo nell'adulto), oppure la disopiramide (insieme a un farmaco che blocca il nodo AV), oppure la riduzione settale in un centro esperto: tre opzioni nella stessa riga.", "e1271");
+    h += r("1", "C-LD", "Ipotensione acuta che non risponde ai liquidi → fenilefrina e.v. (o un altro vasocostrittore senza effetto inotropo), da sola o con un betabloccante.", "e1271");
+    h += r("2b", "C-EO", "Sospendere i vasodilatatori (ACE-inibitori, sartani, diidropiridine) o la digossina.", "e1271");
+    h += r("2b", "C-EO", "Diuretici orali a basse dosi, con cautela, solo con segni di sovraccarico e pressioni di riempimento alte.", "e1271");
+    h += r("3: Harm", "C-LD", "Verapamil con dispnea a riposo, ipotensione, gradiente a riposo molto alto (per esempio &gt;100 mmHg), e — età pediatrica — in tutti i bambini sotto le 6 settimane.", "e1271");
+    h += r("1", "B-R", "Disfunzione sistolica persistente (FEVS &lt;50%) → l'inibitore della miosina si sospende.", "e1276");
+    h += r("2a", "C-EO", "FEVS &lt;50% → si sospendono gli inotropi negativi già indicati: verapamil, diltiazem, disopiramide.", "e1276");
+    h += nota("conf", "Che cosa cambia rispetto alla ESC 2023: l'inibitore della miosina è in classe 1 e allo stesso gradino di disopiramide e riduzione settale, dove la ESC lo tiene in IIa (A in aggiunta, B in monoterapia) e dopo betabloccanti, calcioantagonisti e/o disopiramide; la disopiramide va sempre con un bloccante del nodo AV e non ha una riga di monoterapia (ESC IIb C); il calcioantagonista sostituisce il betabloccante anche quando è solo inefficace; la fenilefrina è nominata e in classe 1 (ESC IIa C, senza molecola); vasodilatatori e digossina scendono a 2b (ESC IIa C); per il verapamil la ESC scrive solo «con cautela» da 100 mmHg in su.");
+    h += "<h4>Riduzione settale" + (f14 && os.sint ? " — tocca questo caso" : "") + "</h4>";
+    h += r("1", "B-NR", "Riduzione settale nel sintomatico nonostante la terapia, nei pazienti idonei, in centri esperti. Idoneità: dispnea o dolore gravi, di solito NYHA III–IV, o talvolta sincope o presincope da sforzo; gradiente di picco ≥50 mmHg circa, a riposo o con la provocazione fisiologica, con SAM e setto abbastanza spesso.", "e1272");
+    h += r("1", "B-NR", "Miectomia chirurgica nel sintomatico con altre malattie cardiache da operare — papillare anomalo, lembo mitralico anteriore molto allungato, valvulopatia mitralica intrinseca, coronaropatia multivasale, stenosi aortica.", "e1272");
+    h += r("1", "C-LD", "Alcolizzazione nell'adulto molto sintomatico in cui la chirurgia è controindicata o ha un rischio inaccettabile.", "e1272");
+    h += r("2b", "B-NR", "Miectomia precoce in NYHA II, nei centri di riferimento, con ipertensione polmonare severa e progressiva, atrio sinistro dilatato con FA sintomatica, scarsa capacità funzionale allo sforzo, o — bambini e giovani adulti — gradiente a riposo &gt;100 mmHg.", "e1272");
+    h += r("2b", "C-LD", "Riduzione settale come alternativa all'aumento della terapia medica, dopo una decisione condivisa.", "e1272");
+    h += r("3: Harm", "C-LD", "Riduzione settale nell'asintomatico con capacità d'esercizio normale.", "e1272");
+    h += r("3: Harm", "B-NR", "Sostituzione mitralica al solo scopo di togliere l'ostruzione, quando la riduzione settale è possibile.", "e1272");
+    h += nota("conf", "Che cosa cambia rispetto alla ESC 2023: la sincope da sforzo entra nella classe 1 attraverso i criteri di idoneità (ESC IIa C); l'alcol è la seconda scelta, quando la chirurgia non si può fare, e rende meno con gradienti ≥100 mmHg e setto ≥30 mm" + pgs("AHA 2024, p. e1273") + ", dove la ESC lo dice prima scelta in molti centri; in NYHA II la AHA nomina solo la miectomia e criteri diversi; la riduzione settale al posto dei farmaci non ha una riga ESC; l'asintomatico è «Harm» per la AHA, per la ESC un'assenza di dati. La sostituzione mitralica «Harm» non contraddice le righe ESC, che la danno per l'insufficienza mitralica, non per l'ostruzione.");
+    h += "<h4>Pacing nell'ostruzione" + (s.icd || s.ctrSrt ? " — tocca questo caso" : "") + "</h4>";
+    h += r("2a", "B-NR", "In chi riceve un ICD, ICD bicamerale se serve il pacing atriale o AV sequenziale per bradicardia o conduzione, o per tentare di alleviare i sintomi dell'ostruzione (più spesso oltre i 65 anni).", "e1269");
+    h += nota("conf", "Che cosa cambia rispetto alla ESC 2023: un gradino più su (2a contro IIb C) e senza le condizioni ESC — ritmo sinusale, gradiente ≥50 mmHg, sintomi refrattari.");
+    h += "<h4>La ricerca dell'ostruzione" + (os.via === "anno" || os.via === "sforzo" ? " — tocca questo caso" : "") + "</h4>";
+    h += r("1", "B-NR", "Nel sintomatico senza gradiente ≥50 a riposo o con le manovre, eco da sforzo.", "e1253");
+    h += r("2a", "C-LD", "Nell'asintomatico senza gradiente ≥50 all'eco standard, eco da sforzo.", "e1253");
+    h += nota("conf", "Che cosa cambia rispetto alla ESC 2023: nel sintomatico le due coincidono (ESC I B); nell'asintomatico la AHA trova l'eco da sforzo ragionevole (2a), la ESC lo lascia al singolo caso, senza classe (nota «a» della Fig. 12).");
+    return h;
+  }
+
+  function htmlInc(s, os, sc, m) {
+    function inc(tocca, x) { return nota(tocca ? "" : "spenta", (tocca ? "<b>Tocca questo caso.</b> " : "") + x); }
+    var f14 = os.via === "f14" && os.sint, p3 = sc.passo === 3, mava = s.mol === "mava";
+    var h = "";
+    h += inc(f14 && s.bb === "in", "<b>Verapamil e diltiazem: dopo il betabloccante inefficace o non tollerato?</b> Nella Fig. 14 e nel testo sul verapamil vengono dopo il betabloccante «ancora sintomatico» o non tollerato" + pgs(F14 + "; " + P53) + "; nella Rec. Table la classe I vale per chi non tollera il betabloccante o lo ha controindicato, e disopiramide e mavacamten si danno in aggiunta al betabloccante" + pgs(R19) + ". Lettura prudente: se il betabloccante è tollerato ma non basta, il terzo gradino si aggiunge; lo strumento non lo sostituisce.");
+    h += inc(f14 && sc.passo === 2, "<b>Diltiazem.</b> Figura e tabella lo mettono alla pari del verapamil, I B" + pgs(R19) + "; il testo lo riserva a chi non tollera betabloccanti e verapamil" + pgs(P53) + ".");
+    h += inc(f14 && sc.base === null && p3, "<b>Mavacamten in monoterapia.</b> La Rec. Table lo dice «da considerare», IIa B" + pgs(R19) + "; il testo, poche righe sopra, «considerabile»" + pgs(P53) + ". Vale la tabella, ma la forza è meno solida di quanto la classe faccia pensare; e la riga vuole che anche la disopiramide non sia possibile, che ha una classe più bassa (IIb C).");
+    h += inc(f14 && (p3 || s.diso === "in") && (s.cc === "in" || sc.base === "cc"), "<b>Disopiramide e verapamil.</b> La fonte scrive che si possono associare" + pgs(P53) + "; Isoptin vuole 48 h prima e 24 h dopo senza disopiramide" + st("Isoptin", "4.5") + ", e Ritmodan mette betabloccanti, verapamil e diltiazem fra le associazioni controindicate, salvo casi particolari" + st("Ritmodan", "4.5") + ".");
+    h += inc(f14 && (p3 || s.diso === "in") && (sc.base === "bb" || s.bb === "in"), "<b>Disopiramide in aggiunta al betabloccante.</b> È la riga I B" + pgs(R19) + "; la scheda di Ritmodan controindica l'associazione con i betabloccanti salvo casi particolari, come l'angina" + st("Ritmodan", "4.5") + ". La riga resta, e chi prescrive deve saperlo.");
+    h += inc(s.diso === "in" && (s.mi === "in" || !!s.mol), "<b>Inibitori della miosina e disopiramide.</b> La fonte: non insieme, in assenza di evidenze contrarie" + pgs(P53) + "; le schede di Camzyos e Myqorzo non la controindicano, chiedono monitoraggio" + st("Camzyos, Myqorzo", "4.4, 4.5") + ". Lo strumento segue la fonte.");
+    h += inc(mava && s.mfase === "avvio" && s.fe === SOGLIE.feAvvio, "<b>FEVS al 55%.</b> La fonte riporta EXPLORER-HCM con FE «&gt;55%»" + pgs(P53) + "; la scheda chiede «≥55%» per iniziare" + st(CAM, "4.2") + ". Lo strumento segue la scheda, che è la regola della titolazione.");
+    h += inc(!!s.mol, "<b>Le soglie della titolazione sono della scheda tecnica, non della linea guida.</b> La fonte lo vuole soltanto titolato alla massima dose tollerata con la sorveglianza eco della FEVS, e rimanda alle indicazioni autorizzate, fino a 15 mg" + pgs(R19 + "; " + P53) + ". Gradiente con Valsalva sotto 20 e da 30, FEVS 55 e 50 (e 40 per l'aficamten), gli intervalli e le interazioni vengono da Camzyos e Myqorzo.");
+    h += inc(s.mol === "afi", "<b>Aficamten.</b> Senza classe ESC 2023 e con un tetto di 20 mg, dove le righe ESC nominano il mavacamten fino a 15 mg" + pgs(P53) + "; la gravidanza per Myqorzo non è una controindicazione, per Camzyos sì" + st("Myqorzo, Camzyos", "4.3, 4.6") + ".");
+    h += inc(s.ipo, "<b>Metoprololo e.v. e fenilefrina nell'ipotensione con edema polmonare.</b> La riga IIa C li chiede in quel quadro" + pgs(R19) + "; la scheda del metoprololo lo controindica nello scompenso instabile con edema polmonare e ipotensione" + st("Seloken", "4.3") + ", quella della fenilefrina avverte che nello scompenso grave può peggiorarlo" + st("Fenilefrina Aguettant", "4.4") + ", e quella dell'esmololo lo controindica nel collasso cardiaco scompensato" + st("Brevibloc", "4.3") + ".");
+    h += inc(f14 && os.sint, "<b>Alcolizzazione: mortalità procedurale.</b> Nel paragrafo sull'alcol è «più bassa della miectomia isolata»; due paragrafi dopo, nelle metanalisi, «simile»" + pgs(P56) + ". Lettura prudente: non scegliere l'alcol per la mortalità procedurale.");
+    h += inc(true, "<b>I nitrati.</b> La fonte li fa evitare con l'ostruzione " + corPill("IIa", "C") + pgs(R18) + " ma usa il nitrato orale per provocare il gradiente quando non si può fare sforzo" + pgs(R19c) + "; Monoket e Carvasin controindicano la cardiomiopatia ipertrofica ostruttiva" + st("Monoket, Carvasin", "4.3") + ".");
+    h += inc(s.sesso === "f" && s.grav === "gr", "<b>Betabloccanti in gravidanza.</b> La fonte fa proseguire il betabloccante in corso " + corPill("IIa", "C") + pgs(R32) + " e controindica solo l'atenololo" + pgs(P84) + "; Inderal e Concor sono «generalmente controindicati» in gravidanza e allattamento" + st("Inderal, Concor", "4.3") + ". CONFRONTO Gravidanza ESC 2025 (→ capitolo 22): nella HCM con sintomi da ostruzione il betabloccante si inizia, I C.");
+    return h;
+  }
+
+  function htmlLimiti(s, rn, os, sc) {
+    var lim = [];
+    lim.push("Lo strumento segue la scala della Fig. 14 con le classi della Rec. Table 19: nessuna dose dei betabloccanti viene dalla linea guida, che si ferma alla massima dose tollerata; le dosi sono quelle delle schede tecniche, molte fuori indicazione nella HCM.");
+    lim.push("«In corso» vuol dire alla massima dose tollerata, e «ancora sintomatico» lo dice la classe NYHA del passo 1: la fonte sale di gradino sui sintomi, non su un numero.");
+    lim.push("La riduzione settale è una decisione del team esperto: lo strumento dice le righe e la classe, non sceglie fra miectomia e alcolizzazione se non dove la fonte lo fa (bambino, lesioni da operare).");
+    lim.push("Clearance di Cockcroft-Gault sul peso reale, che decide; con BMI ≥30 accanto quella sul peso aggiustato (ideale di Devine + 0,4 × l'eccesso), con un avviso se le due cadono ai lati di una soglia (decisione del medico, 03/10/2026). Le soglie di mavacamten e aficamten sono in eGFR: per l'aficamten, che non normalizza, lo strumento guarda anche la Cockcroft-Gault, e basta una delle due sotto 30; per il mavacamten la Cockcroft-Gault decide solo senza l'eGFR del laboratorio.");
+    lim.push("Rene sotto 30 o dialisi, e Child-Pugh C: le schede di Camzyos e Myqorzo non danno una dose, perché non sono stati studiati; lo strumento non propone né l'avvio né la titolazione, e decide lo specialista. Non è una controindicazione (decisione del medico, 09/10/2026). Per la stessa ragione, senza né eGFR né Cockcroft-Gault la dose dei due inibitori è «—»: il rene decide se una dose esiste.");
+    if (rn.cl.clcr !== null && s.alt === null) lim.push("Altezza non indicata: il BMI non si calcola e manca il confronto col peso aggiustato; nell'obeso la clearance sul peso reale la sovrastima.");
+    if (rn.kids) lim.push("<b>Età pediatrica</b>: la Cockcroft-Gault non vale e le dosi della scala non si mostrano; gli inibitori della miosina sono per l'adulto; nella riduzione settale vale la riga della miectomia (I C), e sotto i 5 anni la classe di Ross. La cardiologia del bambino è nel progetto Distillati-cardio-pediatria.");
+    lim.push("Le interazioni sono quelle delle tabelle delle due schede: lo strumento non riconosce i farmaci del paziente, li classifica chi compila. Il fluconazolo la scheda di Camzyos lo dà come esempio sia dei forti sia dei moderati inibitori del CYP2C19: la classe dipende dalla dose, e la sceglie chi compila (lettura prudente: forte).");
+    lim.push("Fuori dallo strumento: l'ostruzione medioventricolare (betabloccanti ad alte dosi, verapamil o diltiazem, miectomia in pochi centri" + pgs(P57) + "), lo scompenso e il dolore toracico senza ostruzione (sezione 10.7 del distillato), il rischio aritmico e l'ICD (Tool HCM SCD), l'anticoagulante nella FA (Tool OAC FA).");
+    lim.push("La sala operatoria nella HCM ostruttiva ha uno strumento suo nel capitolo.");
+    return "<li>" + lim.join("</li><li>") + "</li>";
+  }
+
+  function disegna() {
+    var s = S(), rn = rene(s), os = ostruzione(s), sc = scala(s, os), rd = riduzione(s, os, sc), i;
+    var chk = document.querySelectorAll(".chk");
+    for (i = 0; i < chk.length; i++) {
+      var inp = chk[i].querySelector("input"), on = !!(inp && inp.checked);
+      if (on && (" " + chk[i].className + " ").indexOf(" on ") < 0) chk[i].className += " on";
+      if (!on) chk[i].className = chk[i].className.replace(/(^|\s)on(\s|$)/g, " ").replace(/\s+$/, "");
+    }
+    function vedi(id, si) { var e = el(id); var c = e.className.replace(/(^|\s)hide(\s|$)/g, " ").replace(/\s+$/, "").replace(/^\s+/, ""); e.className = si ? c : (c ? c + " hide" : "hide"); }
+    var mol = radio("mol");
+    vedi("rigaGrav", radio("sesso") === "f");
+    vedi("boxMava", mol === "mava"); vedi("interMava", mol === "mava");
+    vedi("boxAfi", mol === "afi"); vedi("interAfi", mol === "afi");
+    vedi("hInter", !!mol); vedi("rigaGctrl", !!mol);
+    var mf = sel("mfase"), af = sel("afase");
+    vedi("rigaSospG", mf === "s8" || mf === "mant");
+    vedi("rigaMaum", mf === "mant" && !ckv("msospG"));
+    vedi("rigaMdose", mf !== "avvio");
+    vedi("rigaAdose", af !== "avvio");
+    vedi("rigaM2", mf !== "avvio" && radio("mdose") === "2.5");
+
+    // un valore fuori scala non conta, e lo si dice: altrimenti il «—» che
+    // segue darebbe la ragione sbagliata («serve la FEVS»)
+    el("outOstr").innerHTML = htmlOstr(s, os) + (s.feFuori ? nota("", "FEVS fuori scala (5–90%): non conta, e dove serve si legge «—».") : "");
+    el("outScala").innerHTML = htmlScala(s, os, sc) + (s.qtcFuori ? nota("", "QTc fuori scala (300–700 ms): non conta.") : "");
+    el("outRene").innerHTML = htmlRene(s, rn);
+
+    var f14 = os.via === "f14" && os.sint;
+    el("d_bb").className = "card farm " + stato3(f14 && (sc.passo === 1 || sc.base === "bb"), s.bb === "ko");
+    el("d_bb").innerHTML = htmlBB(s, rn, sc);
+    el("d_cc").className = "card farm " + stato3(f14 && (sc.passo === 2 || sc.base === "cc"), s.cc === "ko");
+    el("d_cc").innerHTML = htmlCC(s, rn, os);
+    var dEx = disoEsclusa(s).length || s.diso === "ko" || s.mi === "in" || (s.qtc !== null && s.qtc > SOGLIE.qtc && s.diso !== "in");
+    el("d_diso").className = "card farm " + stato3(f14 && sc.passo === 3 && !sc.fine, dEx);
+    el("d_diso").innerHTML = htmlDiso(s, rn, sc);
+    el("d_diur").className = "card farm";
+    el("d_diur").innerHTML = htmlDiur(s, rn);
+    el("d_evita").className = "card farm s-no";
+    el("d_evita").innerHTML = htmlEvita(s);
+
+    var m = s.mol === "mava" ? mava(s, rn) : (s.mol === "afi" ? afi(s, rn, os) : null);
+    el("outMI").className = "card farm " + (m ? (m.stato === "ok" ? "s-ok" : (m.stato === "no" || m.stato === "stop" ? "s-no" : (m.stato === "sosp" ? "s-ris" : ""))) : "");
+    el("outMI").innerHTML = htmlMI(s, rn, os, sc, m || nuovoMI()) + (s.gCtrlFuori && s.mol ? nota("", "Gradiente con Valsalva all'eco di controllo fuori scala (0–250 mmHg): non conta.") : "");
+
+    el("d_ipo").className = "card farm " + (s.ipo ? "s-ok" : "");
+    el("d_ipo").innerHTML = htmlIpo(s, rn);
+    el("outSrt").innerHTML = htmlSrt(s, os, sc, rd);
+    el("outAha").innerHTML = htmlAha(s, os, sc);
+    el("outInc").innerHTML = htmlInc(s, os, sc, m);
+    el("limiti").innerHTML = htmlLimiti(s, rn, os, sc);
+
+    function bar(id, kk, x) { var b = el(id); b.className = "cat " + kk; b.innerHTML = x; }
+    if (os.max === null) bar("barG", "kx", "gradiente —");
+    else { var cg = catGrad(os.max); bar("barG", cg === "50" ? "k4" : (cg === "30" ? "k2" : "k0"), os.max + " mmHg"); }
+    var bp = { manca:["kx", "gradino —"], anno:["k1", "eco a 1 anno"], sforzo:["k1", "eco da sforzo"], nonostr:["kx", "senza ostruzione"], asint:["k1", sc.controllato ? "si prosegue" : "asintomatico"], insieme:["k4", "mai insieme"] };
+    if (sc.gate) bar("barPasso", bp[sc.gate][0], bp[sc.gate][1]);
+    else if (sc.fine) bar("barPasso", "k3", "riduzione settale");
+    else bar("barPasso", "k0", sc.passo === 1 ? "1 · betabloccante" : (sc.passo === 2 ? "2 · verapamil o diltiazem" : "3 · disopiramide o mavacamten"));
+    bar("barRene", rn.kids ? "kx" : (rn.dialisi ? "k4" : (rn.crcl !== null ? (rn.crcl < 30 ? "k4" : (rn.crcl <= 50 ? "k3" : "k1")) : "kx")), rn.kids ? "rene —" : (rn.dialisi ? "dialisi" : (rn.crcl !== null ? "ClCr " + nf(rn.crcl, 0) : "rene —")));
+  }
+
+  document.addEventListener("input", disegna);
+  document.addEventListener("change", disegna);
+  el("azzera").addEventListener("click", function () {
+    var ins = document.querySelectorAll("input"), ss = document.querySelectorAll("select"), i;
+    for (i = 0; i < ins.length; i++) {
+      if (ins[i].type === "checkbox" || ins[i].type === "radio") ins[i].checked = false;
+      else ins[i].value = "";
+    }
+    for (i = 0; i < ss.length; i++) ss[i].value = "";
+    el("ucr_mg").checked = true;
+    disegna();
+    window.scrollTo(0, 0);
+  });
+
+  window.OSTR_MOTORE = { clearance:clearance, rene:rene, nadoBanda:nadoBanda, atenBanda:atenBanda, bisoTetto:bisoTetto, mavaRene:mavaRene, afiRene:afiRene,
+    incroci:incroci, ostruzione:ostruzione, scala:scala, riduzione:riduzione, mava:mava, afi:afi, mInter:mInter, aInter:aInter, mGiu:mGiu, mSu:mSu, esmololo:esmololo };
+  disegna();
+})();
+</script>
+<script data-iphone="web">
+// Solo da un indirizzo https, cioe' dalla pagina pubblicata: aperto come file
+// il tool non cerca ne' manifest ne' service worker, che accanto al file non
+// ci sono. Un errore qui non deve fermare niente: e' un di piu'.
+(function(){
+if(location.protocol!=="https:") return;
+try{
+  var t=document.getElementsByTagName("head")[0];
+  var m=document.createElement("link"); m.rel="manifest"; m.href="manifest.webmanifest";
+  var i=document.createElement("link"); i.rel="apple-touch-icon"; i.href="icona-180.png";
+  t.appendChild(m); t.appendChild(i);
+  if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js")["catch"](function(){});
+}catch(e){}
+})();
+</script>
+<script data-iphone="fine">document.documentElement.className+=" motore-ok";</script>
+</body>
+</html>
